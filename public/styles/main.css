@@ -16,4 +16,18 @@ body {
     height: 100%;
 }
 
+#mapPortrait {
+    display: none
+}
+
+@media (max-width: 500px) {
+    #mapLevel {
+        display: none
+    }
+
+    #mapPortrait {
+        display: block
+    }
+}
+
 
