@@ -20,7 +20,13 @@ body {
     display: none
 }
 
-@media (max-width: 500px) {
+ #pin1 {
+    position: absolute;
+    left: 50%;
+    bottom: 50%;
+} 
+
+/* @media (max-width: 500px) {
     #mapLevel {
         display: none
     }
@@ -28,6 +34,6 @@ body {
     #mapPortrait {
         display: block
     }
-}
+} */
 
 

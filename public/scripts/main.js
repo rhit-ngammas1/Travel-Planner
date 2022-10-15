@@ -31,6 +31,10 @@ rhit.ClassName = class {
 /** function and class syntax examples */
 rhit.main = function () {
 	console.log("Ready");
+	
+	$('[data-toggle="popover"]').popover();
+	
+	
 };
 
 rhit.main();

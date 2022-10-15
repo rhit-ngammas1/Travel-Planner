@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
   <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
   <link rel="stylesheet" href="styles/main.css">
+  <link href="styles/bootstrap-popover-x.css" rel="stylesheet">
   <title>App Name</title>
 </head>
 
@@ -16,15 +17,53 @@
   </nav>
   <div id="mainPage" class="container page-container justify-content-center">
     <div class="row justify-content-center">
-      <div class="col">
+      <div class="col-12">
         
           <img src="imgs/map4x.png" id="mapLevel" alt="us map" style="width: 100%">
           <img src="imgs/map_portrait.png" id="mapPortrait" alt="us map" style="width: 100%">
-        
+          <img src="imgs/redpin3.jpg" alt="redpin" id="pin1" data-toggle="popover-x" data-target='#cityPopover'>
+          <img src="imgs/redpin3.jpg" alt="redpin" id="pin2" data-toggle="popover-x" data-target='#cityPopover2'>
+          <img src="imgs/redpin3.jpg" alt="redpin" id="pin3">
+          <img src="imgs/redpin3.jpg" alt="redpin" id="pin4">
+          <img src="imgs/redpin3.jpg" alt="redpin" id="pin5">
       
       </div>
-    </div> 
-  </div>
+
+
+      <div id="cityPopover" class="popover popover-default">
+        <div class="arrow"></div>
+        <h3 class="popover-title">
+          <span class="close pull-right" data-dismiss="popover-x">&times;</span>
+          Title here
+        </h3>
+        <div class="popover-content">
+          Popover content goes here
+        </div>
+        <div class="popover-footer">
+          Footer here
+        </div>
+      </div>
+
+      <div id="cityPopover2" class="popover popover-default">
+        <div class="arrow"></div>
+        <h3 class="popover-title">
+          <span class="close pull-right" data-dismiss="popover-x">&times;</span>
+          Title here
+        </h3>
+        <div class="popover-content">
+          Popover content goes here
+        </div>
+        <div class="popover-footer">
+          Footer here
+        </div>
+      </div>
+        
+
+      
+    
+    </div>
+  </div> 
+</div>
   
   
     
@@ -42,6 +81,8 @@
   <script src="/__/firebase/7.18.0/firebase-firestore.js"></script>
   <script src="/__/firebase/init.js"></script>
   <script src="scripts/main.js"></script>
+  <script src="scripts/bootstrap-popover-x.js"></script>
+  
 </body>
 
 </html>
