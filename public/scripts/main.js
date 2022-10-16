@@ -32,9 +32,12 @@ rhit.ClassName = class {
 rhit.main = function () {
 	console.log("Ready");
 	
-	$('[data-toggle="popover"]').popover();
+	// $(document).ready(function() {
+	// 	$('[data-toggle="popover"]').popover();
+	// })
 	
 	
+
 };
 
 rhit.main();

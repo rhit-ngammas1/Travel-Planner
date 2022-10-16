@@ -5,63 +5,74 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
-  <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
+  <!-- <link rel="stylesheet" href="styles/bootstrap-material-design.min.css"> -->
   <link rel="stylesheet" href="styles/main.css">
+  <link href="styles/bootstrap.min.css" rel="stylesheet">
   <link href="styles/bootstrap-popover-x.css" rel="stylesheet">
   <title>App Name</title>
 </head>
 
 <body>
   <nav class="navbar navbar-dark fixed-top justify-content-center">
-    <a class="navbar-brand" href="#">Where do you want to go?</a>
+    <div class="header-text-container">
+      <a class="navbar-brand" href="#">Where do you want to go?</a>
+    </div>
   </nav>
   <div id="mainPage" class="container page-container justify-content-center">
     <div class="row justify-content-center">
-      <div class="col-12">
-        
-          <img src="imgs/map4x.png" id="mapLevel" alt="us map" style="width: 100%">
-          <img src="imgs/map_portrait.png" id="mapPortrait" alt="us map" style="width: 100%">
-          <img src="imgs/redpin3.jpg" alt="redpin" id="pin1" data-toggle="popover-x" data-target='#cityPopover'>
-          <img src="imgs/redpin3.jpg" alt="redpin" id="pin2" data-toggle="popover-x" data-target='#cityPopover2'>
-          <img src="imgs/redpin3.jpg" alt="redpin" id="pin3">
-          <img src="imgs/redpin3.jpg" alt="redpin" id="pin4">
-          <img src="imgs/redpin3.jpg" alt="redpin" id="pin5">
-      
-      </div>
+      <div class="col-11 col-md-10 col-lg-8 no-gutters">
+        <img src="imgs/map4x.png" id="mapLevel" alt="us map" style="width: 100%">
+        <img src="imgs/redpin_9_14.jpg" alt="new york pin" id="newYorkPin" data-toggle="popover" title="New York">
+        <br>
+        <img src="imgs/blackpin_9_14.jpg" alt="miami pin" id="miamiPin" data-toggle="popover" title="miami">
+        <br>
+        <img src="imgs/blackpin_9_14.jpg" alt="los angeles pin" id="laPin" data-toggle="popover" title="Los Angeles">
 
-
-      <div id="cityPopover" class="popover popover-default">
-        <div class="arrow"></div>
-        <h3 class="popover-title">
-          <span class="close pull-right" data-dismiss="popover-x">&times;</span>
-          Title here
-        </h3>
-        <div class="popover-content">
-          Popover content goes here
-        </div>
-        <div class="popover-footer">
-          Footer here
-        </div>
-      </div>
-
-      <div id="cityPopover2" class="popover popover-default">
-        <div class="arrow"></div>
-        <h3 class="popover-title">
-          <span class="close pull-right" data-dismiss="popover-x">&times;</span>
-          Title here
-        </h3>
-        <div class="popover-content">
-          Popover content goes here
-        </div>
-        <div class="popover-footer">
-          Footer here
-        </div>
       </div>
         
 
-      
-    
     </div>
+
+      
+  </div>
+          
+          
+      
+      
+
+
+
+      <!-- <div id="newYorkPopover" class="popover popover-default">
+        <div class="arrow"></div>
+        <h3 class="popover-title">
+          <span class="close pull-right" data-dismiss="popover-x">&times;</span>
+          Title here
+        </h3>
+        <div class="popover-content">
+          Popover content goes here
+        </div>
+        <div class="popover-footer">
+          Footer here
+        </div>
+      </div> -->
+
+      <!-- <div id="miamiPopover" class="popover popover-default">
+        <div class="arrow"></div>
+        <h3 class="popover-title">
+          <span class="close pull-right" data-dismiss="popover-x">&times;</span>
+          Title here
+        </h3>
+        <div class="popover-content">
+          Popover content goes here
+        </div>
+        <div class="popover-footer">
+          Footer here
+        </div>
+      </div> -->
+        
+
+      
+  
   </div> 
 </div>
   
@@ -72,9 +83,12 @@
 
   </div>
   <script src="scripts/jquery.min.js"></script>
-  <script src="scripts/popper.js"></script>
-  <script src="scripts/bootstrap-material-design.js"></script>
-  <script>$("body").bootstrapMaterialDesign();</script>
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="scripts/bootstrap.min.js"></script>
+  <!-- <script src="scripts/popper.js"></script> -->
+  
+  <!-- <script src="scripts/bootstrap-material-design.js"></script> -->
+  <!-- <script>$("body").bootstrapMaterialDesign();</script> -->
   <script src="/__/firebase/7.18.0/firebase-app.js"></script>
   <script src="/__/firebase/7.18.0/firebase-analytics.js"></script>
   <script src="/__/firebase/7.18.0/firebase-auth.js"></script>
@@ -82,6 +96,41 @@
   <script src="/__/firebase/init.js"></script>
   <script src="scripts/main.js"></script>
   <script src="scripts/bootstrap-popover-x.js"></script>
+  <script>
+    
+    // $(document).ready(function() {
+    //   $('#newYorkPopover').popoverX({
+    //     placement: "vertical"
+    //   })
+
+    //   $('#newYorkPin').popoverButton({
+    //     trigger: "hover focus",
+    //     target: '#newYorkPopover'
+    //   })
+
+    // });
+
+    $(document).ready(function() {
+      $(function () {
+        document.querySelectorAll('[data-toggle="popover"]').forEach(el => new bootstrap.Popover(el))
+        
+      })
+      
+    })
+
+    $('#newYorkPin').on('shown.bs.popover', (event) => {
+      const target_po = event.target.getAttribute('aria-describedby');
+      console.log(target_po);
+      const btn_grp = `
+        <div class="container justify-content-center">
+          <div><button class="btn btn-primary btn-sm" style="margin: 4px 0px 2px 0px; width: 100%">Detail</button></div>
+          <div><button class="btn btn-success btn-sm" style="margin: 2px 0px 2px 0px; width: 100%">Destination</button></div>
+          <div><button class="btn btn-danger btn-sm" style="margin: 2px 0px 4px 0px; width: 100%">Start Route</button></div>
+        </div>  
+      `
+      $(`#${target_po}`).append(btn_grp);
+    })
+  </script>
   
 </body>
 

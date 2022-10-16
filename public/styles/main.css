@@ -5,6 +5,7 @@ body {
 .navbar {
     background-color: #800000;
     color: white;
+    position: sticky;
 }
 
 .page-container {
@@ -20,11 +21,35 @@ body {
     display: none
 }
 
- #pin1 {
-    position: absolute;
-    left: 50%;
-    bottom: 50%;
+#newYorkPin {
+    position: relative;
+    margin: 0;
+    left: 89%;
+    bottom: 61%;
 } 
+
+#miamiPin {
+    position: relative;
+    left: 82%;
+    bottom: 17%;
+} 
+
+#laPin {
+    position: relative;
+    left: 8%;
+    bottom: 50%;
+}
+z 
+#mapContainer {
+    width: 80vw;
+    height: 100vw;
+}
+
+
+/* .popover {
+    width: 150px;
+    height: 100px;
+} */
 
 /* @media (max-width: 500px) {
     #mapLevel {
