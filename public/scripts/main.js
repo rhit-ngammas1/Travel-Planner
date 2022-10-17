@@ -45,8 +45,8 @@ rhit.PageController = class {
 
 		$('#cityDetailModal').on('hidden.bs.modal', (event) => {
 			$('#cityDetailModal .carousel-item').remove();
-			$('#cityDetailModal .city-detail-title').remove();
-			$('#cityDetailModal .city-detail-intro').remove();
+			$('#cityDetailModal .city-detail-title').html(" ");
+			$('#cityDetailModal .city-detail-intro').html(" ");
 		})
 		
 	}
