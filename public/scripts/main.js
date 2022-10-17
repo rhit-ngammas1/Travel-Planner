@@ -18,26 +18,37 @@ rhit.PageController = class {
 	}
 
 	initializePopover = () => {
-		$('#newYorkPin').on('shown.bs.popover', (event) => {
+		$('[data-toggle="popover"]').on('shown.bs.popover', (event) => {
 			const target_po = event.target.getAttribute('aria-describedby');
-			const target_city = event.target.dataset.cityId;
-			console.log(target_city);
+			const target_city = event.target.dataset.pinCityId;
 			const btn_grp = `
 			  <div class="container justify-content-center">
-				<div class='city-btn'><button class="btn btn-primary btn-sm" style="margin: 4px 0px 2px 0px; width: 100%" data-bs-toggle="modal" data-bs-target="#cityDetailModal" onclick="rhit.pageController.fetchCityInfo(${target_city})">Detail</button></div>
+				<div class='city-btn'><button class="btn btn-primary btn-sm city-detail-btn" style="margin: 4px 0px 2px 0px; width: 100%" data-bs-toggle="modal" data-bs-target="#cityDetailModal" data-city-id="${target_city}">Detail</button></div>
 				<div class='city-btn'><button class="btn btn-success btn-sm" style="margin: 2px 0px 2px 0px; width: 100%">Destination</button></div>
 				<div class='city-btn'><button class="btn btn-danger btn-sm" style="margin: 2px 0px 4px 0px; width: 100%">Start Route</button></div>
 			  </div>  
 			`
-			$(`#${target_po}`).attr('data-city-id', '100');
+			
 			$(`#${target_po}`).append(btn_grp);
+
+			$('.city-detail-btn').on('click', (event) => {
+				console.log('clicked');
+				this.fetchCityInfo(event.target.dataset.cityId);
+			})
 		  })
 	}
 
 	initializeModal = () => {
 		$('#cityDetailModal').on('show.bs.modal', (event) => {
 			$('[data-toggle="popover"]').popover('hide');
-		  })
+		})
+
+		$('#cityDetailModal').on('hidden.bs.modal', (event) => {
+			$('#cityDetailModal .carousel-item').remove();
+			$('#cityDetailModal .city-detail-title').remove();
+			$('#cityDetailModal .city-detail-intro').remove();
+		})
+		
 	}
 
 	fetchCityInfo = (cityId) => {
@@ -46,12 +57,23 @@ rhit.PageController = class {
 	}
 
 	prepareCityDetailModal(cityInfo) {
-		$('#cityDetailModal .modal-title').html(cityInfo.name);
+		$('#cityDetailModal .city-detail-title').html(cityInfo.name);
 		console.log(cityInfo.info);
 		const newInfo = cityInfo.info.replaceAll('\\n', '\n');
 		//console.log(newInfo);
-		$('#cityDetailModal .modal-body').html(newInfo);
-		$('#cityDetailModal .modal-body').attr('style', 'white-space: pre-line')
+		$('#cityDetailModal .city-detail-intro').html(newInfo);
+		$('#cityDetailModal .city-detail-intro').attr('style', 'white-space: pre-line')
+		
+		for(const imgLink of cityInfo.imgSrc) {
+			const carouselItem = `
+			<div class="carousel-item">
+				<img src="${imgLink}" class="d-block w-100" alt="${cityInfo.name} picture">
+		  	</div>
+			`
+			$('#cityDetailModal .city-detail-carousel .carousel-inner').append(carouselItem);
+		}
+
+		$('#cityDetailModal .city-detail-carousel .carousel-item').first().addClass('active');
 		
 	}
 
