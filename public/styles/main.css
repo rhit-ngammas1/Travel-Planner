@@ -17,9 +17,9 @@ body {
     height: 100%;
 }
 
-#mapPortrait {
+/* #mapPortrait {
     display: none
-}
+} */
 
 #newYorkPin {
     position: relative;
