@@ -5,7 +5,7 @@ const db = firebase.firestore();
 
 /** globals */
 rhit.variableName = "";
-rhit.cityManager = null;
+rhit.pageController = null;
 rhit.FB_COL_CITY = 'cities';
 
 rhit.PageController = class {
@@ -20,11 +20,12 @@ rhit.PageController = class {
 	initializePopover = () => {
 		$('[data-toggle="popover"]').on('shown.bs.popover', (event) => {
 			const target_po = event.target.getAttribute('aria-describedby');
-			const target_city = event.target.dataset.pinCityId;
+			const target_city_id = event.target.dataset.pinCityId;
+			const target_city_name = event.target.dataset.pinCityName;
 			const btn_grp = `
 			  <div class="container justify-content-center">
-				<div class='city-btn'><button class="btn btn-primary btn-sm city-detail-btn" style="margin: 4px 0px 2px 0px; width: 100%" data-bs-toggle="modal" data-bs-target="#cityDetailModal" data-city-id="${target_city}">Detail</button></div>
-				<div class='city-btn'><button class="btn btn-success btn-sm" style="margin: 2px 0px 2px 0px; width: 100%">Destination</button></div>
+				<div class='city-btn'><button class="btn btn-primary btn-sm city-detail-btn" style="margin: 4px 0px 2px 0px; width: 100%" data-bs-toggle="modal" data-bs-target="#cityDetailModal" data-city-id="${target_city_id}" data-city-name="${target_city_name}">Detail</button></div>
+				<div class='city-btn'><button class="btn btn-success btn-sm add-dest-btn" style="margin: 2px 0px 2px 0px; width: 100%" data-bs-toggle="modal" data-bs-target="#addDestModal" data-city-id="${target_city_id}" data-city-name="${target_city_name}">Destination</button></div>
 				<div class='city-btn'><button class="btn btn-danger btn-sm" style="margin: 2px 0px 4px 0px; width: 100%">Start Route</button></div>
 			  </div>  
 			`
@@ -32,14 +33,17 @@ rhit.PageController = class {
 			$(`#${target_po}`).append(btn_grp);
 
 			$('.city-detail-btn').on('click', (event) => {
-				console.log('clicked');
 				this.fetchCityInfo(event.target.dataset.cityId);
+			})
+
+			$('.add-dest-btn').on('click', (event) => {
+				this.prepareAddDestModal(event.target.dataset.cityName);
 			})
 		  })
 	}
 
 	initializeModal = () => {
-		$('#cityDetailModal').on('show.bs.modal', (event) => {
+		$('.modal').on('show.bs.modal', (event) => {
 			$('[data-toggle="popover"]').popover('hide');
 		})
 
@@ -47,6 +51,11 @@ rhit.PageController = class {
 			$('#cityDetailModal .carousel-item').remove();
 			$('#cityDetailModal .city-detail-title').html(" ");
 			$('#cityDetailModal .city-detail-intro').html(" ");
+		})
+
+		$('#addDestModal').on('hidden.bs.modal', (event) => {
+			$('#addDestModal .add-dest-title').html(" ");
+			$('#addDestModal .form-group input,textarea').val('');
 		})
 		
 	}
@@ -75,6 +84,10 @@ rhit.PageController = class {
 
 		$('#cityDetailModal .city-detail-carousel .carousel-item').first().addClass('active');
 		
+	}
+
+	prepareAddDestModal = (cityName) => {
+		$('#addDestModal .add-dest-title').html('Adding a travel plan to ' + cityName);
 	}
 
 	
@@ -141,7 +154,7 @@ rhit.main = function () {
 	
 	$(document).ready(function() {
 	 	$('[data-toggle="popover"]').popover();
-		$('[data-toggle="modal"]').modal();
+		// $('[data-toggle="modal"]').modal();
 	})
 	
 	
