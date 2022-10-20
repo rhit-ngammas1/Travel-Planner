@@ -7,6 +7,7 @@ const db = firebase.firestore();
 rhit.variableName = "";
 rhit.pageController = null;
 rhit.FB_COL_CITY = 'cities';
+rhit.fbAuthManager = null;
 
 function htmlToElement(html) {
 	var template = document.createElement('template');
@@ -209,12 +210,83 @@ rhit.city = class {
 // 		oldList.parentElement.appendChild(newList);
 // 	}
 // }
+rhit.LoginPageController = class {
+	constructor() {
+		document.querySelector("#rosefireButton").onclick = (event) => {
+			rhit.fbAuthManager.signIn();
+		}
+	}
+}
+
+rhit.FbAuthManager = class { //scaffolding always changes
+	constructor() {
+		this._user = null;
+	}
+	beginListening(changeListener) {
+		firebase.auth().onAuthStateChanged((user) => {
+			this._user = user;
+			changeListener();
+		});
+	}
+	signIn() {
+		console.log("Sign in using Rosefire");
+		Rosefire.signIn("9dc0940e-ea6b-4a43-9fb1-873b6cff11b8", (err, rfUser) => {
+			if (err) {
+				console.log("Rosefire error!", err);
+				return;
+			}
+			console.log("Rosefire success!", rfUser);
+
+			firebase.auth().signInWithCustomToken(rfUser.token)
+			.catch((error) => {
+				const errorCode = error.code;
+				const errorMessage = error.message;
+				if (errorCode === 'auth/invalid-custom-token') {
+					alert('The token you provided is not valid.');
+				  } else {
+					console.error("Custom auth error", errorCode, errorMessage);
+				  }
+			});
+		});
+
+	}
+	signOut() {
+		firebase.auth().signOut().catch((error) => {
+			console.log("Sign out error");
+		});
+	}
+	get isSignedIn() {
+		return !!this._user;
+	}
+	get uid() {
+		return this._user.uid;
+	}
+}
+rhit.checkForRedirects = function(){
+	if (document.querySelector("#loginPage") && rhit.fbAuthManager.isSignedIn){
+		window.location.href="/map.html"
+	}
+
+	if (!document.querySelector("#loginPage") && !rhit.fbAuthManager.isSignedIn){
+		window.location.href="/"
+	}
+}
 
 
 /* Main */
 /** function and class syntax examples */
 rhit.main = function () {
 	console.log("Ready");
+	rhit.fbAuthManager = new rhit.FbAuthManager();
+	
+	rhit.fbAuthManager.beginListening(() => {
+		console.log("isSignedIn = ",rhit.fbAuthManager.isSignedIn);
+		rhit.checkForRedirects();
+		if (document.querySelector("#loginPage")) {
+			console.log("You are on the login page.");
+			new rhit.LoginPageController();
+		}
+	});
 
 	rhit.pageController = new rhit.PageController();
 	

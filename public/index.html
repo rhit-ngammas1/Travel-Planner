@@ -5,135 +5,32 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
-  <!-- <link rel="stylesheet" href="styles/bootstrap-material-design.min.css"> -->
+  <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
   <link rel="stylesheet" href="styles/main.css">
-  <link href="styles/bootstrap.min.css" rel="stylesheet">
-  <link href="styles/bootstrap-popover-x.css" rel="stylesheet">
-  <title>App Name</title>
+  <title>Travel Planner</title>
 </head>
 
-<body>  
-
-  <div class="modal fade" id="cityDetailModal" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title city-detail-title"></h5>
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="city-detail-carousel">
-            <div id="cityDetailCarouselControls" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner">
-                
-              </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="city-detail-intro">
-
-          </div>
-          
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade" id="addDestModal" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title add-dest-title"></h5>
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="form-group bmd-form-group">
-            <label for="cityPlanName" class="bmd-label-floating">Name</label>
-            <input type="text" class="form-control" id="cityPlanName">
-          </div>
-          <div class="form-group bmd-form-group">
-            <label for="cityPlanStartDate" class="bmd-label-floating">Start Date</label>
-            <input type="text" class="form-control" id="cityPlanStartDate">
-          </div>
-          <div class="form-group bmd-form-group">
-            <label for="cityPlanEndDate" class="bmd-label-floating">End Date</label>
-            <input type="text" class="form-control" id="cityPlanEndDate">
-          </div>
-          <div class="form-group bmd-form-group">
-            <label for="cityPlanBudget" class="bmd-label-floating">Budget</label>
-            <input type="number" class="form-control" id="cityPlanBudget" step="100">
-          </div>
-          <div class="form-group bmd-form-group">
-            <label for="cityPlanDescription" class="bmd-label-floating">Description</label>
-            <textarea class="form-control" id="cityPlanDescription"></textarea>
-          </div>  
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-  <nav class="navbar navbar-dark fixed-top justify-content-center">
-    <div class="header-text-container">
-      <a class="navbar-brand" href="#">Where do you want to go?</a>
-    </div>
+<body>
+  <nav class="navbar navbar-dark fixed-top">
+    <a class="navbar-brand" href="#">Travel Planner</a>
   </nav>
-  <div id="mainPage" class="container page-container justify-content-center">
-    <div class="row justify-content-center">
-      <div class="col-11 col-md-10 col-lg-8 no-gutters">
-        <img src="imgs/map4x.png" id="mapLevel" alt="us map" style="width: 100%">
-        <img src="imgs/redpin_9_14.jpg" alt="new york pin" id="newYorkPin" data-pin-city-id="100" data-pin-city-name="New York" data-toggle="popover" title="New York">
-        <br>
-        <img src="imgs/blackpin_9_14.jpg" alt="miami pin" id="miamiPin" data-pin-city-id="101" data-pin-city-name="Miami" data-toggle="popover" title="miami">
-        <br>
-        <img src="imgs/blackpin_9_14.jpg" alt="los angeles pin" id="laPin" data-toggle="popover" title="Los Angeles">
-        
-        
-      </div>
-    </div>
-  </div>   
-  
-  
-     
-        
+  <div id="loginPage" class="container page-container">
+    <img id="roseLogo" src="imgs/rose_logo.png" alt="Rose-Hulman logo">
+  </div>
+  <button id="rosefireButton" type="button" class="btn">Sign in with RoseFire</button>
+
 
   <script src="scripts/jquery.min.js"></script>
-  <script src="https://unpkg.com/@popperjs/core@2"></script>
-  <script src="scripts/bootstrap.min.js"></script>
-  <!-- <script src="scripts/popper.js"></script> -->
-  
-  <!-- <script src="scripts/bootstrap-material-design.js"></script> -->
-  <!-- <script>$("body").bootstrapMaterialDesign();</script> -->
+  <script src="scripts/popper.js"></script>
+  <script src="scripts/bootstrap-material-design.js"></script>
+  <script>$("body").bootstrapMaterialDesign();</script>
   <script src="/__/firebase/7.18.0/firebase-app.js"></script>
   <script src="/__/firebase/7.18.0/firebase-analytics.js"></script>
-  <script src="/__/firebase/7.18.0/firebase-auth.js"></script>
   <script src="/__/firebase/7.18.0/firebase-firestore.js"></script>
+  <script src="/__/firebase/7.18.0/firebase-auth.js"></script>
   <script src="/__/firebase/init.js"></script>
+  <script src="scripts/rosefire.min.js"></script>
   <script src="scripts/main.js"></script>
-  <script src="scripts/bootstrap-popover-x.js"></script>
-
-  
 </body>
 
 </html>
