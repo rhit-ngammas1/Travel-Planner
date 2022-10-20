@@ -8,6 +8,14 @@ rhit.variableName = "";
 rhit.pageController = null;
 rhit.FB_COL_CITY = 'cities';
 
+function htmlToElement(html) {
+	var template = document.createElement('template');
+	html = html.trim();
+	template.innerHTML = html;
+	return template.content.firstChild;
+   }
+
+//main page controller
 rhit.PageController = class {
 
 	constructor() {
@@ -97,7 +105,7 @@ rhit.PageController = class {
 
 }
 
-
+//main page model
 rhit.CityManager = class {
 
 	constructor() {
@@ -134,6 +142,7 @@ rhit.CityManager = class {
 
 }
 
+
 rhit.city = class {
 	constructor(id, name, imgSrc, info) {
 		this.id = id;
@@ -143,6 +152,63 @@ rhit.city = class {
 	}
 }
 
+// rhit.ListPageController = class{
+// 	constructor(){
+// 		// document.querySelector("#submitAddPhoto").onclick = (event) => {
+			
+// 		// }
+
+// 		document.querySelector("#submitAddPhoto").addEventListener("click",(event) => {
+// 			const url=document.querySelector("#inputUrl").value;
+// 			const caption=document.querySelector("#inputCaption").value;
+// 			rhit.fbPhotoBucketManager.add(url,caption);
+// 		})
+// 		$('#addPhotoDialog').on('show.bs.modal', (event) => {
+// 			// Pre animation
+// 			document.querySelector("#inputUrl").value = "";
+// 			document.querySelector("#inputCaption").value= "";
+// 		})
+// 		$('#addPhotoDialog').on('shown.bs.modal', (event) => {
+// 			// Post animation
+// 			document.querySelector("#inputUrl").focus();
+// 		})
+		
+// 		//Start listening
+// 		rhit.fbPhotoBucketManager.beginListening(this.updateList.bind(this))
+// 	}
+
+// 	_createCard(plan){
+// 		return htmlToElement(`        <div>
+// 		<img src='' class='iconDetails'>
+// 	</div>
+// 	<div style='margin-left:60px;'>
+// 		<h4 class="title">${plan.title}</h4>
+// 		<div class="startDate" style="font-size:.6em">${plan.startDate}</div>
+// 		<div class="description" style="font-size:.6em">${plan.description}</div>
+// 	</div>`)
+// 	}
+
+// 	updateList() {
+// 		const newList= htmlToElement('<div id="columns"></div>');
+// 		for(let i=0;i<rhit.fbPhotoBucketManager.length;i++){
+// 			const pb=rhit.fbPhotoBucketManager.getPhotoAtIndex(i);
+// 			const newCard = this._createCard(pb);
+// 			newCard.onclick = (event) => {
+
+// 				// rhit.storage.setPhotoId(pb.id);
+// 				window.location.href=`/photo.html?id=${pb.id}`
+// 			} 
+// 			newList.appendChild(newCard);
+// 		}
+
+
+// 		const oldList=document.querySelector("#columns");
+// 		oldList.removeAttribute("id");
+// 		oldList.hidden=true;
+
+// 		oldList.parentElement.appendChild(newList);
+// 	}
+// }
 
 
 /* Main */
