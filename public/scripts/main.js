@@ -7,7 +7,17 @@ const db = firebase.firestore();
 rhit.variableName = "";
 rhit.pageController = null;
 rhit.FB_COL_CITY = 'cities';
+rhit.FB_COLLECTION_PLAN='plans';
+rhit.FB_COLLECTION_ROUTE='routes';
+rhit.FB_KEY_NAME= 'name';
+rhit.FB_KEY_START_DATE='startDate';
+rhit.FB_KEY_END_DATE='endDate';
+rhit.FB_KEY_BUDGET='budget';
+rhit.FB_KEY_DESCRIPTION='description';
+rhit.FB_KEY_LAST_TOUCHED = "lastTouched";
 rhit.fbAuthManager = null;
+rhit.FB_KEY_AUTHOR = "author";
+rhit.cityManager=null;
 
 function htmlToElement(html) {
 	var template = document.createElement('template');
@@ -24,6 +34,18 @@ rhit.PageController = class {
 		this.cityManager.beginListening(this.updateListener.bind(this));
 		this.initializePopover();
 		this.initializeModal();
+		document.querySelector("#submitAddPlan").addEventListener("click", (event) => {
+			const name = document.querySelector("#cityPlanName").value;
+			const startDate = document.querySelector("#cityPlanStartDate").value;
+			const endDate = document.querySelector("#cityPlanEndDate").value;
+			const budget = document.querySelector("#cityPlanBudget").value;
+			const description = document.querySelector("#cityPlanDescription").value;
+			rhit.cityManager.add(name,startDate,endDate,budget,description);
+		});
+		// document.querySelector("#startRoute").addEventListener("click", (event) => {
+		// 	const startCity = document.querySelector("#cityPlanName").value;
+		// });
+
 	}
 
 	initializePopover = () => {
@@ -34,8 +56,9 @@ rhit.PageController = class {
 			const btn_grp = `
 			  <div class="container justify-content-center">
 				<div class='city-btn'><button class="btn btn-primary btn-sm city-detail-btn" style="margin: 4px 0px 2px 0px; width: 100%" data-bs-toggle="modal" data-bs-target="#cityDetailModal" data-city-id="${target_city_id}" data-city-name="${target_city_name}">Detail</button></div>
-				<div class='city-btn'><button class="btn btn-success btn-sm add-dest-btn" style="margin: 2px 0px 2px 0px; width: 100%" data-bs-toggle="modal" data-bs-target="#addDestModal" data-city-id="${target_city_id}" data-city-name="${target_city_name}">Destination</button></div>
-				<div class='city-btn'><button class="btn btn-danger btn-sm" style="margin: 2px 0px 4px 0px; width: 100%">Start Route</button></div>
+				<div class='city-btn'><button class="btn btn-success btn-sm add-dest-btn" style="margin: 2px 0px 2px 0px; width: 100%" data-bs-toggle="modal" data-bs-target="#addDestModal" data-city-id="${target_city_id}" data-city-name="${target_city_name}">Create Plan</button></div>
+				<div class='city-btn'><button class="btn btn-danger btn-sm startRoute" style="margin: 2px 0px 4px 0px; width: 100%">Start Route</button></div>
+				<div class='city-btn'><button class="btn btn-danger btn-sm endRoute" style="margin: 2px 0px 4px 0px; width: 100%">End Route</button></div>
 			  </div>  
 			`
 			
@@ -47,6 +70,9 @@ rhit.PageController = class {
 
 			$('.add-dest-btn').on('click', (event) => {
 				this.prepareAddDestModal(event.target.dataset.cityName);
+			})
+			$('.startRoute').on('click', (event) => {
+				const startCity = (event.target.dataset.cityName);
 			})
 		  })
 	}
@@ -99,9 +125,13 @@ rhit.PageController = class {
 		$('#addDestModal .add-dest-title').html('Adding a travel plan to ' + cityName);
 	}
 
-	
+
+
 	updateListener = () => {
 		console.log('there is an update!');
+	}
+	updateView(){
+
 	}
 
 }
@@ -109,13 +139,37 @@ rhit.PageController = class {
 //main page model
 rhit.CityManager = class {
 
-	constructor() {
+	constructor(uid) {
+		this._uid=uid;
+		this._ref=firebase.firestore().collection(rhit.FB_COLLECTION_PLAN);
 		this.cityCollection = db.collection(rhit.FB_COL_CITY);
 		this._unsubcribe = null;
 		this.cityList = [];
 	}
 
+	add(name,startDate,endDate,budget,description){
+		this._ref.add({
+			[rhit.FB_KEY_NAME]: name,
+			[rhit.FB_KEY_START_DATE]: startDate,
+			[rhit.FB_KEY_END_DATE]: endDate,
+			[rhit.FB_KEY_BUDGET]: budget,
+			[rhit.FB_KEY_DESCRIPTION]: description,
+			[rhit.FB_KEY_START_DATE]: startDate,
+			[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
+			[rhit.FB_KEY_LAST_TOUCHED]: firebase.firestore.Timestamp.now()
+		})
+		.then((docRef) => {
+			console.log("Plan written with ID: ", docRef.id);
+		})
+		.catch((error) => {
+			console.error("Error adding plan: ", error);
+		});
+	}
+
 	beginListening(updateListener) {
+		if(this._uid){ // run if not null
+			query=query.where(rhit.FB_KEY_AUTHOR,"==",this._uid);
+		}
 		this._unsubcribe = this.cityCollection
 		.limit(50)
 		.onSnapshot((querySnapshot) => {
@@ -277,6 +331,7 @@ rhit.checkForRedirects = function(){
 /** function and class syntax examples */
 rhit.main = function () {
 	console.log("Ready");
+	const urlParams = new URLSearchParams(window.location.search);
 	rhit.fbAuthManager = new rhit.FbAuthManager();
 	
 	rhit.fbAuthManager.beginListening(() => {
@@ -288,7 +343,14 @@ rhit.main = function () {
 		}
 	});
 
-	rhit.pageController = new rhit.PageController();
+	
+	if (document.querySelector("#mainPage")) {
+		console.log("You are on the map page.");
+
+		const uid = urlParams.get("uid"); //search for keyword "uid" in the url
+		rhit.cityManager = new rhit.CityManager(uid);
+		rhit.pageController = new rhit.PageController();
+	}
 	
 	$(document).ready(function() {
 	 	$('[data-toggle="popover"]').popover();
