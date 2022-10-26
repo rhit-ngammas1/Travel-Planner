@@ -12,55 +12,6 @@ body {
     margin-top: 75px;
 }
 
-.map-box {
-    display: grid;
-    height: 100%;
-}
-
-/* #mapPortrait {
-    display: none
-} */
-
-#newYorkPin {
-    position: relative;
-    margin: 0;
-    left: 89%;
-    bottom: 61%;
-} 
-
-#miamiPin {
-    position: relative;
-    left: 82%;
-    bottom: 17%;
-} 
-
-#laPin {
-    position: relative;
-    left: 8%;
-    bottom: 50%;
-}
-z 
-#mapContainer {
-    width: 80vw;
-    height: 100vw;
-}
-
-
-/* .popover {
-    width: 150px;
-    height: 100px;
-} */
-
-/* @media (max-width: 500px) {
-    #mapLevel {
-        display: none
-    }
-
-    #mapPortrait {
-        display: block
-    }
-} */
-
 
 #planPage{
     width:100%;

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
   <!-- <link rel="stylesheet" href="styles/bootstrap-material-design.min.css"> -->
-  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/mapPage.css">
   <link href="styles/bootstrap.min.css" rel="stylesheet">
   <link href="styles/bootstrap-popover-x.css" rel="stylesheet">
   <title>Travel Planner</title>
@@ -87,7 +87,47 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="submitAddPlan">Save changes</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="submitAddPlan">Add City Plan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="addRouteModal" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title add-route-title"></h5>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group bmd-form-group">
+            <label for="routeName" class="bmd-label-floating">Name</label>
+            <input type="text" class="form-control" id="routeName">
+          </div>
+          <div class="form-group bmd-form-group">
+            <label for="routeStartDate" class="bmd-label-floating">Start Date</label>
+            <input type="text" class="form-control" id="routeStartDate">
+          </div>
+          <div class="form-group bmd-form-group">
+            <label for="routeEndDate" class="bmd-label-floating">End Date</label>
+            <input type="text" class="form-control" id="routeEndDate">
+          </div>
+          <div class="form-group bmd-form-group">
+            <label for="routeBudget" class="bmd-label-floating">Budget</label>
+            <input type="number" class="form-control" id="routeBudget" step="100">
+          </div>
+          <div class="form-group bmd-form-group">
+            <label for="routeDescription" class="bmd-label-floating">Description</label>
+            <textarea class="form-control" id="routeDescription"></textarea>
+          </div>  
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="submitAddRoute">Add Route</button>
         </div>
       </div>
     </div>
@@ -112,11 +152,11 @@
     <div class="row justify-content-center">
       <div class="col-11 col-md-10 col-lg-8 no-gutters">
         <img src="imgs/map4x.png" id="mapLevel" alt="us map" style="width: 100%">
-        <img src="imgs/redpin_9_14.jpg" alt="new york pin" id="newYorkPin" data-pin-city-id="100" data-pin-city-name="New York" data-toggle="popover" title="New York">
+        <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="new york pin" id="newYorkPin" data-pin-city-id="100" data-pin-city-name="New York" data-toggle="popover" title="New York">
         <br>
-        <img src="imgs/blackpin_9_14.jpg" alt="miami pin" id="miamiPin" data-pin-city-id="101" data-pin-city-name="Miami" data-toggle="popover" title="miami">
+        <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="miami pin" id="miamiPin" data-pin-city-id="101" data-pin-city-name="Miami" data-toggle="popover" title="miami">
         <br>
-        <img src="imgs/blackpin_9_14.jpg" alt="los angeles pin" id="laPin" data-toggle="popover" title="Los Angeles">
+        <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="los angeles pin" id="laPin" data-toggle="popover" title="Los Angeles">
         
         
       </div>
