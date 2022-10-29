@@ -23,119 +23,151 @@
             </div>
           </div>
     </nav>
+
+    <!--Drawer-->
+  <!-- <div class="bmd-layout-container bmd-drawer-f-l bmd-drawer-overlay">
+    <header class="bmd-layout-header">
+      <div class="navbar navbar-dark bg-faded fixed-top justify-content-start">
+        <button class="navbar-toggler" type="button" data-toggle="drawer" data-target="#dw-s2">
+          <span class="sr-only">Toggle drawer</span>
+          <i class="material-icons">menu</i>
+        </button>
+        <a class="navbar-brand" href="/list.html">&nbsp;&nbsp;My Movie Quotes</a>
+      </div>
+    </header>
+    <div id="dw-s2" class="bmd-layout-drawer bg-faded">
+      <header>
+        <a class="navbar-brand">My Movie Quotes</a>
+      </header>
+      <ul class="list-group">
+        <a id="allMenuButt" class="list-group-item"> <i class="material-icons">people</i> Show All Quotes</a>
+        <a id="myMenuButt" class="list-group-item"> <i class="material-icons">person</i> Show My Quotes</a>
+        <a id="signOutMenuButt" class="list-group-item"> <i class="material-icons">logout</i> Sign Out</a>
+      </ul>
+    </div>
+    <main class="bmd-layout-content"> -->
+      <!--Place to add pins/cards in-->
+      <!-- <div id="listPage" class="container page-container">
+        <div id="quoteListContainer"></div>
+      </div>
+    </main>
+  </div> -->
+
+
     <div id="planPage" class="container page-container">
-        <div id="columns">
-            <!-- placeholder item for display -->
-            <div class="month">May</div>
-            <div class="pin" data-toggle="modal" data-target="#planDetails">
-                <div>
-                    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Seattle_Great_Wheel%2C_Seattle%2C_Washington%2C_Estados_Unidos%2C_2017-09-02%2C_DD_16.jpg/800px-Seattle_Great_Wheel%2C_Seattle%2C_Washington%2C_Estados_Unidos%2C_2017-09-02%2C_DD_16.jpg'
-                        class='iconDetails'>
+        <div class="month">May</div>
+            <div id="pinContainer1">
+                <!-- placeholder item for display -->
+                <!-- <div class="month">May</div>
+                <div class="pin" data-toggle="modal" data-target="#planDetails">
+                    <div>
+                        <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Seattle_Great_Wheel%2C_Seattle%2C_Washington%2C_Estados_Unidos%2C_2017-09-02%2C_DD_16.jpg/800px-Seattle_Great_Wheel%2C_Seattle%2C_Washington%2C_Estados_Unidos%2C_2017-09-02%2C_DD_16.jpg'
+                            class='iconDetails'>
+                    </div>
+                    <div style='margin-left:120px;'>
+                        <h4 class="title">Seattle Plan</h4>
+                        <span class="startDate" style="font-size:1em">Start Date- </span>
+                        <span class="startDateValue" style="font-size:1em">May 3</span>
+                        <div></div>
+                        <span class="budget" style="font-size:1em">Budget- </span>
+                        <span class="budgetValue" style="font-size:1em">$1000</span>
+                    </div>
+                    <button id="fab" type="button" class="btn bmd-btn-fab">
+                        <i class="material-icons">close</i>
+                    </button>
                 </div>
-                <div style='margin-left:120px;'>
-                    <h4 class="title">Seattle Plan</h4>
-                    <span class="startDate" style="font-size:1em">Start Date- </span>
-                    <span class="startDateValue" style="font-size:1em">May 3</span>
-                    <div></div>
-                    <span class="budget" style="font-size:1em">Budget- </span>
-                    <span class="budgetValue" style="font-size:1em">$1000</span>
+                <hr>
+                <div class="pin">
+                    <div>
+                        <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Jefferson_Memorial_at_Sunset_%28cropped%29.jpg/800px-Jefferson_Memorial_at_Sunset_%28cropped%29.jpg'
+                            class='iconDetails'>
+                    </div>
+                    <div style='margin-left:120px;'>
+                        <h4 class="title">DC Plan</h4>
+                        <span class="startDate" style="font-size:1em">Start Date- </span>
+                        <span class="startDateValue" style="font-size:1em">May 7</span>
+                        <div></div>
+                        <span class="budget" style="font-size:1em">Budget- </span>
+                        <span class="budgetValue" style="font-size:1em">$600</span>
+                    </div>
+                    <button id="fab" type="button" class="btn bmd-btn-fab">
+                        <i class="material-icons">close</i>
+                    </button>
                 </div>
-                <button id="fab" type="button" class="btn bmd-btn-fab">
-                    <i class="material-icons">close</i>
-                </button>
+                <hr>
+                <div class="pin">
+                    <div>
+                        <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/1_times_square_night_2013.jpg/1280px-1_times_square_night_2013.jpg'
+                            class='iconDetails'>
+                    </div>
+                    <div style='margin-left:120px;'>
+                        <h4 class="title">NYC Plan</h4>
+                        <span class="startDate" style="font-size:1em">Start Date- </span>
+                        <span class="startDateValue" style="font-size:1em">May 22</span>
+                        <div></div>
+                        <span class="budget" style="font-size:1em">Budget- </span>
+                        <span class="budgetValue" style="font-size:1em">$700</span>
+                    </div>
+                    <button id="fab" type="button" class="btn bmd-btn-fab">
+                        <i class="material-icons">close</i>
+                    </button>
+                </div>
+                <hr>
+                <div class="month">June</div>
+                <div class="pin">
+                    <div>
+                        <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Wiki_training_0226.jpg/213px-Wiki_training_0226.jpg'
+                            class='iconDetails'>
+                    </div>
+                    <div style='margin-left:120px;'>
+                        <h4 class="title">LA Plan</h4>
+                        <span class="startDate" style="font-size:1em">Start Date- </span>
+                        <span class="startDateValue" style="font-size:1em">June 4</span>
+                        <div></div>
+                        <span class="budget" style="font-size:1em">Budget- </span>
+                        <span class="budgetValue" style="font-size:1em">$350</span>
+                    </div>
+                    <button id="fab" type="button" class="btn bmd-btn-fab">
+                        <i class="material-icons">close</i>
+                    </button>
+                </div>
+                <hr>
+                <div class="pin">
+                    <div>
+                        <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/FerryBuildingEmbarcaderoBayBridge.JPG/1280px-FerryBuildingEmbarcaderoBayBridge.JPG'
+                            class='iconDetails'>
+                    </div>
+                    <div style='margin-left:120px;'>
+                        <h4 class="title">SF Plan</h4>
+                        <span class="startDate" style="font-size:1em">Start Date- </span>
+                        <span class="startDateValue" style="font-size:1em">June 12</span>
+                        <div></div>
+                        <span class="budget" style="font-size:1em">Budget- </span>
+                        <span class="budgetValue" style="font-size:1em">$800</span>
+                    </div>
+                    <button id="fab" type="button" class="btn bmd-btn-fab">
+                        <i class="material-icons">close</i>
+                    </button>
+                </div>
+                <hr>
+                <div class="pin">
+                    <div>
+                        <img src='https://upload.wikimedia.org/wikipedia/en/c/c1/Cloud_Gate_%28The_Bean%29_from_east%27.jpg'
+                            class='iconDetails'>
+                    </div>
+                    <div style='margin-left:120px;'>
+                        <h4 class="title">Chicago Plan</h4>
+                        <span class="startDate" style="font-size:1em">Start Date- </span>
+                        <span class="startDateValue" style="font-size:1em">June 26</span>
+                        <div></div>
+                        <span class="budget" style="font-size:1em">Budget- </span>
+                        <span class="budgetValue" style="font-size:1em">$200</span>
+                    </div>
+                    <button id="fab" type="button" class="btn bmd-btn-fab">
+                        <i class="material-icons">close</i>
+                    </button>
+                </div> -->
             </div>
-            <hr>
-            <div class="pin">
-                <div>
-                    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Jefferson_Memorial_at_Sunset_%28cropped%29.jpg/800px-Jefferson_Memorial_at_Sunset_%28cropped%29.jpg'
-                        class='iconDetails'>
-                </div>
-                <div style='margin-left:120px;'>
-                    <h4 class="title">DC Plan</h4>
-                    <span class="startDate" style="font-size:1em">Start Date- </span>
-                    <span class="startDateValue" style="font-size:1em">May 7</span>
-                    <div></div>
-                    <span class="budget" style="font-size:1em">Budget- </span>
-                    <span class="budgetValue" style="font-size:1em">$600</span>
-                </div>
-                <button id="fab" type="button" class="btn bmd-btn-fab">
-                    <i class="material-icons">close</i>
-                </button>
-            </div>
-            <hr>
-            <div class="pin">
-                <div>
-                    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/1_times_square_night_2013.jpg/1280px-1_times_square_night_2013.jpg'
-                        class='iconDetails'>
-                </div>
-                <div style='margin-left:120px;'>
-                    <h4 class="title">NYC Plan</h4>
-                    <span class="startDate" style="font-size:1em">Start Date- </span>
-                    <span class="startDateValue" style="font-size:1em">May 22</span>
-                    <div></div>
-                    <span class="budget" style="font-size:1em">Budget- </span>
-                    <span class="budgetValue" style="font-size:1em">$700</span>
-                </div>
-                <button id="fab" type="button" class="btn bmd-btn-fab">
-                    <i class="material-icons">close</i>
-                </button>
-            </div>
-            <hr>
-            <div class="month">June</div>
-            <div class="pin">
-                <div>
-                    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Wiki_training_0226.jpg/213px-Wiki_training_0226.jpg'
-                        class='iconDetails'>
-                </div>
-                <div style='margin-left:120px;'>
-                    <h4 class="title">LA Plan</h4>
-                    <span class="startDate" style="font-size:1em">Start Date- </span>
-                    <span class="startDateValue" style="font-size:1em">June 4</span>
-                    <div></div>
-                    <span class="budget" style="font-size:1em">Budget- </span>
-                    <span class="budgetValue" style="font-size:1em">$350</span>
-                </div>
-                <button id="fab" type="button" class="btn bmd-btn-fab">
-                    <i class="material-icons">close</i>
-                </button>
-            </div>
-            <hr>
-            <div class="pin">
-                <div>
-                    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/FerryBuildingEmbarcaderoBayBridge.JPG/1280px-FerryBuildingEmbarcaderoBayBridge.JPG'
-                        class='iconDetails'>
-                </div>
-                <div style='margin-left:120px;'>
-                    <h4 class="title">SF Plan</h4>
-                    <span class="startDate" style="font-size:1em">Start Date- </span>
-                    <span class="startDateValue" style="font-size:1em">June 12</span>
-                    <div></div>
-                    <span class="budget" style="font-size:1em">Budget- </span>
-                    <span class="budgetValue" style="font-size:1em">$800</span>
-                </div>
-                <button id="fab" type="button" class="btn bmd-btn-fab">
-                    <i class="material-icons">close</i>
-                </button>
-            </div>
-            <hr>
-            <div class="pin">
-                <div>
-                    <img src='https://upload.wikimedia.org/wikipedia/en/c/c1/Cloud_Gate_%28The_Bean%29_from_east%27.jpg'
-                        class='iconDetails'>
-                </div>
-                <div style='margin-left:120px;'>
-                    <h4 class="title">Chicago Plan</h4>
-                    <span class="startDate" style="font-size:1em">Start Date- </span>
-                    <span class="startDateValue" style="font-size:1em">June 26</span>
-                    <div></div>
-                    <span class="budget" style="font-size:1em">Budget- </span>
-                    <span class="budgetValue" style="font-size:1em">$200</span>
-                </div>
-                <button id="fab" type="button" class="btn bmd-btn-fab">
-                    <i class="material-icons">close</i>
-                </button>
-            </div>
-        </div>
     </div>
 
     <!-- Modal -->
@@ -144,7 +176,7 @@
         <div class="modal-content">
 
             <div class="modal-header">
-            <h5 class="modal-title" >Seattle Plan</h5>
+            <h5 class="modal-title">Seattle Plan</h5>
             </div>
 
             <div class="modal-body">

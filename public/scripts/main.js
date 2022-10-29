@@ -5,7 +5,6 @@ const db = firebase.firestore();
 
 /** globals */
 rhit.variableName = "";
-rhit.pageController = null;
 rhit.FB_COL_CITY = 'cities';
 rhit.FB_COLLECTION_PLAN='plans';
 rhit.FB_COLLECTION_ROUTE='routes';
@@ -21,11 +20,14 @@ rhit.FB_KEY_END_DATE='endDate';
 rhit.FB_KEY_BUDGET='budget';
 rhit.FB_KEY_DESCRIPTION='description';
 rhit.FB_KEY_LAST_TOUCHED = "lastTouched";
-rhit.fbAuthManager = null;
 rhit.FB_KEY_AUTHOR = "author";
+rhit.pageController = null;
+rhit.fbAuthManager = null;
 rhit.cityManager = null;
 rhit.planManager = null;
+rhit.planDetailsManager = null;
 rhit.routeManager = null;
+
 
 function htmlToElement(html) {
 	var template = document.createElement('template');
@@ -233,15 +235,86 @@ rhit.CityManager = class {
 			return doc.data();
 		}
 	}
-
-
-
 }
+
+rhit.Plan = class {
+	constructor(id, cityId, cityName, name, startDate, endDate, budget, description, author, timestamp) {
+		this.id = id;
+		this.cityId = cityId; 
+		this.cityName = cityName;
+		this.name = name;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.budget = budget;
+		this.description = description;
+		this.author = author;
+		this.timestamp = timestamp;
+	}
+}
+
+rhit.PlanDetailsManager  = class {
+	constructor(planId) {
+	  this._documentSnapshot = {};
+	  this._unsubscribe = null;
+	  this._planDoc = firebase.firestore().collection(rhit.FB_COLLECTION_PLAN).doc(planId);
+	  this.planId = planId;
+	}
+
+	beginListening(updateListener) {
+		this._unsubscribe = this._planDoc.onSnapshot((doc) => {
+			if (doc.exists) {
+				console.log("Document data:", doc.data());
+				console.log("User ID:", this.uid);
+				this._documentSnapshot = doc;
+				updateListener();
+			} else {
+				console.log("No such document!");
+			}
+		});
+	}
+	stopListening() {
+	  this._unsubscribe();
+	}
+	//uses doc ID  to specify which document of the Plan collection to edit: change to creating own controller?
+	edit(startDate, endDate, budget, description){
+		console.log(`Document being edited: ${this._planDoc}`)
+		this.planCollection.update({
+			[rhit.FB_KEY_START_DATE]: startDate,
+			[rhit.FB_KEY_END_DATE]: endDate,
+			[rhit.FB_KEY_BUDGET]: budget,
+			[rhit.FB_KEY_DESCRIPTION]: description,
+			[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
+			[rhit.FB_KEY_LAST_TOUCHED]: firebase.firestore.Timestamp.now()
+		})
+		.then((docRef) => {
+			console.log("Plan edited with ID: ", docRef.id);
+		})
+		.catch((error) => {
+			console.error("Error editing plan: ", error);
+		});
+	}
+	delete() {
+		return this._planDoc.delete();
+	}
+
+	get startDate() {
+		return this._documentSnapshot.get(rhit.FB_KEY_START_DATE);
+	}
+	get endDate() {
+		return this._documentSnapshot.get(rhit.FB_KEY_END_DATE);
+	}
+	get budget() {
+		return this._documentSnapshot.get(rhit.FB_KEY_BUDGET);
+	}
+	get description() {
+		return this._documentSnapshot.get(rhit.FB_KEY_DESCRIPTION);
+	}
+   }
 
 rhit.PlanManager = class {
 	constructor(uid) {
-		this._uid=uid;
-		this.planCollection=firebase.firestore().collection(rhit.FB_COLLECTION_PLAN);
+		this._uid = uid;
+		this.planCollection = firebase.firestore().collection(rhit.FB_COLLECTION_PLAN);
 		this._unsubcribe = null;
 		this.cityList = [];
 	}
@@ -253,11 +326,19 @@ rhit.PlanManager = class {
 		this._unsubcribe = this.planCollection
 		.limit(50)
 		.onSnapshot((docSnapshot) => {
-			this.cityList = docSnapshot.docs;
-			console.log(docSnapshot.docs);
+			this.cityList = docSnapshot.docs;	//does this add a new document/plan to the list of cities that have a plan?
+			console.log("DocSnapshot.docs: ", docSnapshot.docs);
+			
+			docSnapshot.forEach((doc) => {  //for each doc in the collection, print data
+				console.log(doc.data());
+			});
+
 			updateListener();
 		})
 	}
+	// stopListening() {             needed?
+	// 	this._unsubscribe();		
+	// }
 
 	add(cityId, cityName, name,startDate,endDate,budget,description){
 		this.planCollection.add({
@@ -277,6 +358,26 @@ rhit.PlanManager = class {
 		.catch((error) => {
 			console.error("Error adding plan: ", error);
 		});
+	}
+
+	getPlanAtIndex(index) {   
+		const docSnapshot = this.cityList[index];
+		const plan = new rhit.Plan(docSnapshot.id, 
+									docSnapshot.get(rhit.FB_KEY_CITY_ID), 
+									docSnapshot.get(rhit.FB_KEY_CITY_NAME), 
+									docSnapshot.get(rhit.FB_KEY_NAME),
+									docSnapshot.get(rhit.FB_KEY_START_DATE),
+									docSnapshot.get(rhit.FB_KEY_END_DATE),
+									docSnapshot.get(rhit.FB_KEY_BUDGET),
+									docSnapshot.get(rhit.FB_KEY_DESCRIPTION),
+									docSnapshot.get(rhit.FB_KEY_AUTHOR),
+									docSnapshot.get(rhit.FB_KEY_LAST_TOUCHED)
+									);
+		return plan;
+	}
+
+	get length() {    
+		return this.cityList.length;
 	}
 
 
@@ -384,63 +485,89 @@ rhit.city = class {
 	}
 }
 
-// rhit.ListPageController = class{
-// 	constructor(){
-// 		// document.querySelector("#submitAddPhoto").onclick = (event) => {
+rhit.ListPageController = class {
+	//initialize modal as well?
+	constructor(){
+		document.querySelector("#planDoneButt").addEventListener("click", (event) => {
+			const startDate = document.querySelector("#startDateInput").value;
+			const endDate = document.querySelector("#endDateInput").value;
+			const budget = document.querySelector("#budgetInput").value;
+			const description = document.querySelector("#descripInput").value;
 			
-// 		// }
+			console.log("Modal has called for an edit, NEED TO INSERT ID HERE");
+			rhit.planDetailsManager = new rhit.PlanDetailsManager();
+			rhit.planDetailsManager.edit(startDate, endDate, budget, description);
+		});
 
-// 		document.querySelector("#submitAddPhoto").addEventListener("click",(event) => {
-// 			const url=document.querySelector("#inputUrl").value;
-// 			const caption=document.querySelector("#inputCaption").value;
-// 			rhit.fbPhotoBucketManager.add(url,caption);
-// 		})
-// 		$('#addPhotoDialog').on('show.bs.modal', (event) => {
-// 			// Pre animation
-// 			document.querySelector("#inputUrl").value = "";
-// 			document.querySelector("#inputCaption").value= "";
-// 		})
-// 		$('#addPhotoDialog').on('shown.bs.modal', (event) => {
-// 			// Post animation
-// 			document.querySelector("#inputUrl").focus();
-// 		})
-		
-// 		//Start listening
-// 		rhit.fbPhotoBucketManager.beginListening(this.updateList.bind(this))
-// 	}
+		rhit.planManager.beginListening(this.updateList.bind(this));
+		rhit.planManager.beginListening(this.updateModalDetails.bind(this));
+		// $('#addPhotoDialog').on('show.bs.modal', (event) => {
+		// 	// Pre animation
+		// 	document.querySelector("#inputUrl").value = "";
+		// 	document.querySelector("#inputCaption").value= "";
+		// })
+		// $('#addPhotoDialog').on('shown.bs.modal', (event) => {
+		// 	// Post animation
+		// 	document.querySelector("#inputUrl").focus();
+		// })
+	}
 
-// 	_createCard(plan){
-// 		return htmlToElement(`        <div>
-// 		<img src='' class='iconDetails'>
-// 	</div>
-// 	<div style='margin-left:60px;'>
-// 		<h4 class="title">${plan.title}</h4>
-// 		<div class="startDate" style="font-size:.6em">${plan.startDate}</div>
-// 		<div class="description" style="font-size:.6em">${plan.description}</div>
-// 	</div>`)
-// 	}
+	//Update Viewer
+	updateList(){
+		const newList = htmlToElement('<div id="pinContainer1"></div');		//make number a var, corresponding to each of the 12 months
 
-// 	updateList() {
-// 		const newList= htmlToElement('<div id="columns"></div>');
-// 		for(let i=0;i<rhit.fbPhotoBucketManager.length;i++){
-// 			const pb=rhit.fbPhotoBucketManager.getPhotoAtIndex(i);
-// 			const newCard = this._createCard(pb);
-// 			newCard.onclick = (event) => {
+		for (let i = 0; i < rhit.planManager.length; i++){
+			const plan = rhit.planManager.getPlanAtIndex(i);
+			const newCard = this._createCard(plan);
 
-// 				// rhit.storage.setPhotoId(pb.id);
-// 				window.location.href=`/photo.html?id=${pb.id}`
-// 			} 
-// 			newList.appendChild(newCard);
-// 		}
+			newCard.onclick = (event) => {						
+				window.location.href = `/plan.html?id=${plan.id}`;
+			};
+
+			newList.appendChild(newCard);
+		}
+
+		const oldList = document.querySelector("#pinContainer1");		//will have to do for multiple pinContainers
+		oldList.removeAttribute("id");
+		oldList.hidden = true;
+		oldList.parentElement.appendChild(newList);
+	}
+	updateModalDetails() {  
+		document.querySelector("#startDateInput").innerHTML = rhit.planManager.startDate;
+		document.querySelector("#endDateInput").innerHTML = rhit.planManager.endDate;
+		document.querySelector("#budgetInput").innerHTML = rhit.planManager.budget;
+		document.querySelector("#descripInput").innerHTML = rhit.planManager.description;
+	}
+
+	//Helper Functions
+	_createCard(plan) {
+		return htmlToElement(`
+			<div>
+				<div class="pin">
+					<div>
+						<img src='https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Wiki_training_0226.jpg/213px-Wiki_training_0226.jpg'
+							class='iconDetails'>
+					</div>
+					<div style='margin-left:120px;'>
+						<h4 class="title">${plan.cityName} Plan</h4>
+						<span class="startDate" style="font-size:1em">Start Date- </span>
+						<span class="startDateValue" style="font-size:1em">${plan.startDate}</span>
+						<div></div>
+						<span class="budget" style="font-size:1em">Budget- </span>
+						<span class="budgetValue" style="font-size:1em">$${plan.budget}</span>
+					</div>
+					<button id="fab" type="button" class="btn bmd-btn-fab">
+						<i class="material-icons">close</i>
+					</button>
+				</div>
+				<hr>
+			</div>
+		`)
+	}
+
+};
 
 
-// 		const oldList=document.querySelector("#columns");
-// 		oldList.removeAttribute("id");
-// 		oldList.hidden=true;
-
-// 		oldList.parentElement.appendChild(newList);
-// 	}
-// }
 rhit.LoginPageController = class {
 	constructor() {
 		document.querySelector("#rosefireButton").onclick = (event) => {
@@ -521,7 +648,16 @@ rhit.main = function () {
 	});
 
 	
-	if (document.querySelector("#mainPage")) {
+	if (document.querySelector("#planPage")) {
+		console.log("You are on the Plans and Routes page.");
+
+		const uid = urlParams.get("uid"); //search for keyword "uid" in the url
+		rhit.cityManager = new rhit.CityManager();
+		rhit.planManager = new rhit.PlanManager(uid);
+		rhit.routeManager = new rhit.RouteManager(uid);
+		rhit.pageController = new rhit.ListPageController();
+	}
+	if (document.querySelector("#mPage")) {
 		console.log("You are on the map page.");
 
 		const uid = urlParams.get("uid"); //search for keyword "uid" in the url
