@@ -1,6 +1,7 @@
 
 /** namespace. */
 var rhit = rhit || {};
+rhit.storage = rhit.storage || {};
 const db = firebase.firestore();
 
 /** globals */
@@ -21,12 +22,26 @@ rhit.FB_KEY_BUDGET='budget';
 rhit.FB_KEY_DESCRIPTION='description';
 rhit.FB_KEY_LAST_TOUCHED = "lastTouched";
 rhit.FB_KEY_AUTHOR = "author";
+
+rhit.storage.PLAN_ID_KEY = "planId";
+
 rhit.pageController = null;
 rhit.fbAuthManager = null;
 rhit.cityManager = null;
 rhit.planManager = null;
 rhit.planDetailsManager = null;
 rhit.routeManager = null;
+
+rhit.storage.getPlanId = function() {
+	const planId = sessionStorage.getItem(rhit.storage.PLAN_ID_KEY);
+	if(!planId){
+		console.log("No plan id");
+	}
+	return planId;
+};
+rhit.storage.setPlanId = function(planId){
+	sessionStorage.setItem(rhit.storage.PLAN_ID_KEY, planId);
+};
 
 
 function htmlToElement(html) {
@@ -278,7 +293,7 @@ rhit.PlanDetailsManager  = class {
 	//uses doc ID  to specify which document of the Plan collection to edit: change to creating own controller?
 	edit(startDate, endDate, budget, description){
 		console.log(`Document being edited: ${this._planDoc}`)
-		this.planCollection.update({
+		this._planDoc.update({
 			[rhit.FB_KEY_START_DATE]: startDate,
 			[rhit.FB_KEY_END_DATE]: endDate,
 			[rhit.FB_KEY_BUDGET]: budget,
@@ -286,12 +301,12 @@ rhit.PlanDetailsManager  = class {
 			[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
 			[rhit.FB_KEY_LAST_TOUCHED]: firebase.firestore.Timestamp.now()
 		})
-		.then((docRef) => {
-			console.log("Plan edited with ID: ", docRef.id);
-		})
-		.catch((error) => {
-			console.error("Error editing plan: ", error);
-		});
+		// .then((docRef) => {
+		// 	console.log("Plan edited with ID: ", docRef.id);
+		// })
+		// .catch((error) => {
+		// 	console.error("Error editing plan: ", error);
+		// });
 	}
 	delete() {
 		return this._planDoc.delete();
@@ -494,13 +509,13 @@ rhit.ListPageController = class {
 			const budget = document.querySelector("#budgetInput").value;
 			const description = document.querySelector("#descripInput").value;
 			
-			console.log("Modal has called for an edit, NEED TO INSERT ID HERE");
-			rhit.planDetailsManager = new rhit.PlanDetailsManager();
+			const planId = rhit.storage.getPlanId();
+			rhit.planDetailsManager = new rhit.PlanDetailsManager(planId);
 			rhit.planDetailsManager.edit(startDate, endDate, budget, description);
 		});
 
 		rhit.planManager.beginListening(this.updateList.bind(this));
-		rhit.planManager.beginListening(this.updateModalDetails.bind(this));
+		// rhit.planManager.beginListening(this.updateModalDetails.bind(this));
 		// $('#addPhotoDialog').on('show.bs.modal', (event) => {
 		// 	// Pre animation
 		// 	document.querySelector("#inputUrl").value = "";
@@ -521,7 +536,9 @@ rhit.ListPageController = class {
 			const newCard = this._createCard(plan);
 
 			newCard.onclick = (event) => {						
-				window.location.href = `/plan.html?id=${plan.id}`;
+				console.log("Clicked on card with id: ", plan.id);
+				rhit.storage.setPlanId(plan.id);
+				this.updateModalDetails(plan);
 			};
 
 			newList.appendChild(newCard);
@@ -532,18 +549,18 @@ rhit.ListPageController = class {
 		oldList.hidden = true;
 		oldList.parentElement.appendChild(newList);
 	}
-	updateModalDetails() {  
-		document.querySelector("#startDateInput").innerHTML = rhit.planManager.startDate;
-		document.querySelector("#endDateInput").innerHTML = rhit.planManager.endDate;
-		document.querySelector("#budgetInput").innerHTML = rhit.planManager.budget;
-		document.querySelector("#descripInput").innerHTML = rhit.planManager.description;
+	updateModalDetails(plan) {  
+		document.querySelector("#startDateInput").innerHTML = plan.startDate;
+		document.querySelector("#endDateInput").innerHTML = plan.endDate;
+		document.querySelector("#budgetInput").innerHTML = plan.budget;
+		document.querySelector("#descripInput").innerHTML = plan.description;
 	}
 
 	//Helper Functions
 	_createCard(plan) {
 		return htmlToElement(`
 			<div>
-				<div class="pin">
+				<div class="pin" data-toggle="modal" data-target="#planDetails">
 					<div>
 						<img src='https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Wiki_training_0226.jpg/213px-Wiki_training_0226.jpg'
 							class='iconDetails'>
@@ -626,7 +643,7 @@ rhit.checkForRedirects = function(){
 	}
 
 	if (!document.querySelector("#loginPage") && !rhit.fbAuthManager.isSignedIn){
-		window.location.href="/"
+		window.location.href="/index.html"
 	}
 }
 
@@ -657,7 +674,7 @@ rhit.main = function () {
 		rhit.routeManager = new rhit.RouteManager(uid);
 		rhit.pageController = new rhit.ListPageController();
 	}
-	if (document.querySelector("#mPage")) {
+	if (document.querySelector("#mainPage")) {
 		console.log("You are on the map page.");
 
 		const uid = urlParams.get("uid"); //search for keyword "uid" in the url
