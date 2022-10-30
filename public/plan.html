@@ -11,54 +11,41 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-dark fixed-top">
-        <a class="navbar-brand" href="/map.html">My Plan and Routes</a>
-        <div class="dropdown pull-xs-right">
-            <button class="btn bmd-btn-icon dropdown-toggle" type="button" id="lr1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="material-icons">more_vert</i>
-            </button>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="lr1">
-              <button class="dropdown-item" type="button" data-toggle="modal" data-target="">
-                <i class="material-icons">logout</i>&nbsp;&nbsp;&nbsp;Sign Out</button>
-            </div>
-          </div>
-    </nav>
-
-    <!--Drawer-->
-  <!-- <div class="bmd-layout-container bmd-drawer-f-l bmd-drawer-overlay">
+<!--Drawer-->
+  <div class="bmd-layout-container bmd-drawer-f-l bmd-drawer-overlay">
     <header class="bmd-layout-header">
       <div class="navbar navbar-dark bg-faded fixed-top justify-content-start">
         <button class="navbar-toggler" type="button" data-toggle="drawer" data-target="#dw-s2">
           <span class="sr-only">Toggle drawer</span>
           <i class="material-icons">menu</i>
         </button>
-        <a class="navbar-brand" href="/list.html">&nbsp;&nbsp;My Movie Quotes</a>
+        <a class="navbar-brand" href="/map.html">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;My Movie Quotes</a>
       </div>
     </header>
     <div id="dw-s2" class="bmd-layout-drawer bg-faded">
       <header>
-        <a class="navbar-brand">My Movie Quotes</a>
+        <a class="navbar-brand"><strong>TRAVEL PLANNER</strong></a>
       </header>
       <ul class="list-group">
-        <a id="allMenuButt" class="list-group-item"> <i class="material-icons">people</i> Show All Quotes</a>
-        <a id="myMenuButt" class="list-group-item"> <i class="material-icons">person</i> Show My Quotes</a>
+        <a id="myMapButt" class="list-group-item"> <i class="material-icons">travel_explore</i>My Map</a>
+        <a id="myPlansButt" class="list-group-item"> <i class="material-icons">location_city</i>My Trips</a>
         <a id="signOutMenuButt" class="list-group-item"> <i class="material-icons">logout</i> Sign Out</a>
       </ul>
     </div>
-    <main class="bmd-layout-content"> -->
+    <main class="bmd-layout-content">
       <!--Place to add pins/cards in-->
-      <!-- <div id="listPage" class="container page-container">
-        <div id="quoteListContainer"></div>
-      </div>
+        <div id="planPage" class="container page-container">
+            <div class="month">May</div>
+                <div id="pinContainer1"></div>
+        </div>
     </main>
-  </div> -->
+  </div>
 
-
-    <div id="planPage" class="container page-container">
+   <!-- Example My Plans and Routes -->
+    <!-- <div id="planPage" class="container page-container">
         <div class="month">May</div>
             <div id="pinContainer1">
-                <!-- placeholder item for display -->
-                <!-- <div class="month">May</div>
+                <div class="month">May</div>
                 <div class="pin" data-toggle="modal" data-target="#planDetails">
                     <div>
                         <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Seattle_Great_Wheel%2C_Seattle%2C_Washington%2C_Estados_Unidos%2C_2017-09-02%2C_DD_16.jpg/800px-Seattle_Great_Wheel%2C_Seattle%2C_Washington%2C_Estados_Unidos%2C_2017-09-02%2C_DD_16.jpg'
@@ -166,9 +153,9 @@
                     <button id="fab" type="button" class="btn bmd-btn-fab">
                         <i class="material-icons">close</i>
                     </button>
-                </div> -->
+                </div>
             </div>
-    </div>
+    </div> -->
 
     <!-- Modal -->
     <div class="modal fade" id="planDetails" tabindex="-1" role="dialog" aria-labelledby="Plan details" aria-hidden="true"> 

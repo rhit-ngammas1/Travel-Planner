@@ -12,7 +12,7 @@ body {
     margin-top: 75px;
 }
 
-
+/*Plan Page*/
 #planPage{
     width:100%;
     height:auto;
@@ -85,6 +85,22 @@ body {
 
 #planPage{
     margin-top: 10px;
+}
+
+/*Drawer*/
+.bmd-layout-content{
+    height: 100vh; /*make it 100% of the viewport height*/
+}
+.bmd-layout-drawer>header {             
+    background-color: #800000;
+    color: white;
+}
+.bmd-layout-drawer>ul {
+    background-color: white;
+}
+
+.list-group-item :first-child {     /*space inbetween icon and button for drawer*/
+    margin-right: 0.75rem;
 }
 
 

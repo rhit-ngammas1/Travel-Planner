@@ -512,18 +512,18 @@ rhit.ListPageController = class {
 			rhit.planDetailsManager = new rhit.PlanDetailsManager(planId);
 			rhit.planDetailsManager.edit(startDate, endDate, budget, description);
 		});
-
 		rhit.planManager.beginListening(this.updateList.bind(this));
-		// rhit.planManager.beginListening(this.updateModalDetails.bind(this));
-		// $('#addPhotoDialog').on('show.bs.modal', (event) => {
-		// 	// Pre animation
-		// 	document.querySelector("#inputUrl").value = "";
-		// 	document.querySelector("#inputCaption").value= "";
-		// })
-		// $('#addPhotoDialog').on('shown.bs.modal', (event) => {
-		// 	// Post animation
-		// 	document.querySelector("#inputUrl").focus();
-		// })
+
+		document.querySelector("#myMapButt").addEventListener("click", (event) => {
+			window.location.href="/map.html"
+		});
+		document.querySelector("#myPlansButt").addEventListener("click", (event) => {
+			window.location.href="/plan.html"
+		});
+		document.querySelector("#signOutMenuButt").addEventListener("click", (event) => {
+			rhit.fbAuthManager.signOut();
+		});
+		
 	}
 
 	//Update Viewer
