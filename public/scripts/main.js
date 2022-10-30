@@ -290,7 +290,6 @@ rhit.PlanDetailsManager  = class {
 	stopListening() {
 	  this._unsubscribe();
 	}
-	//uses doc ID  to specify which document of the Plan collection to edit: change to creating own controller?
 	edit(startDate, endDate, budget, description){
 		console.log(`Document being edited: ${this._planDoc}`)
 		this._planDoc.update({
@@ -300,7 +299,7 @@ rhit.PlanDetailsManager  = class {
 			[rhit.FB_KEY_DESCRIPTION]: description,
 			[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
 			[rhit.FB_KEY_LAST_TOUCHED]: firebase.firestore.Timestamp.now()
-		})
+		});
 		// .then((docRef) => {
 		// 	console.log("Plan edited with ID: ", docRef.id);
 		// })
@@ -550,10 +549,11 @@ rhit.ListPageController = class {
 		oldList.parentElement.appendChild(newList);
 	}
 	updateModalDetails(plan) {  
-		document.querySelector("#startDateInput").innerHTML = plan.startDate;
-		document.querySelector("#endDateInput").innerHTML = plan.endDate;
-		document.querySelector("#budgetInput").innerHTML = plan.budget;
-		document.querySelector("#descripInput").innerHTML = plan.description;
+		document.querySelector("#detailModalTitle").innerHTML = `${plan.cityName} Plan`; 
+		document.querySelector("#startDateInput").value = plan.startDate;
+		document.querySelector("#endDateInput").value = plan.endDate;
+		document.querySelector("#budgetInput").value = plan.budget;
+		document.querySelector("#descripInput").value = plan.description;
 	}
 
 	//Helper Functions
