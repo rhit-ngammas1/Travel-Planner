@@ -51,6 +51,46 @@ function htmlToElement(html) {
 	return template.content.firstChild;
    }
 
+function validateData(startDate, endDate, budget) {
+	let validated = true;
+	if( isNaN(Number(budget)) ){		//checks if budget is a number
+		validated = false;
+	}
+	if(!this.validateDate(startDate)){
+		validated = false;
+	}
+	if(!this.validateDate(endDate)){
+		validated = false;
+	}
+	return validated;
+}
+
+function validateDate(date){
+	//Check for right pattern: mm/dd/yyyy
+	if(!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(date)) {
+		return false
+	}
+
+	//Split up parts
+	const parts = date.split("/");
+	const month = parseInt(parts[0], 10);
+	const day = parseInt(parts[1], 10);
+	const year = parseInt(parts[2], 10);
+
+	//Check that year and month are correct
+	if(year < 1000 || year > 3000 || month == 0 || month > 12) {
+        return false;
+	}
+
+	//Check that day are correct
+	const monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+	if(day <= 0 || day > monthLength[month - 1]){
+		return false;
+	}
+	console.log("Date checking works");
+	return true;
+}
+
 //main page controller
 rhit.MapPageController = class {
 
@@ -359,8 +399,8 @@ rhit.PlanManager = class {
 			[rhit.FB_KEY_CITY_ID]: cityId,
 			[rhit.FB_KEY_CITY_NAME]: cityName,
 			[rhit.FB_KEY_NAME]: name,
-			[rhit.FB_KEY_START_DATE]: startDate,
-			[rhit.FB_KEY_END_DATE]: endDate,
+			[rhit.FB_KEY_START_DATE]: startDate,		//firebase.firestore.Timestamp.fromDate(new Date("December 10, 1815"))
+			[rhit.FB_KEY_END_DATE]: endDate,			//firebase.firestore.Timestamp.fromDate(new Date("December 10, 1815"))
 			[rhit.FB_KEY_BUDGET]: budget,
 			[rhit.FB_KEY_DESCRIPTION]: description,
 			[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
@@ -509,8 +549,12 @@ rhit.ListPageController = class {
 			const description = document.querySelector("#descripInput").value;
 			
 			const planId = rhit.storage.getPlanId();
-			rhit.planDetailsManager = new rhit.PlanDetailsManager(planId);
-			rhit.planDetailsManager.edit(startDate, endDate, budget, description);
+			if(validateData(startDate, endDate, budget)){
+				rhit.planDetailsManager = new rhit.PlanDetailsManager(planId);
+				rhit.planDetailsManager.edit(startDate, endDate, budget, description);
+			} else {
+				console.log("Data failed validation");
+			}
 		});
 		rhit.planManager.beginListening(this.updateList.bind(this));
 
