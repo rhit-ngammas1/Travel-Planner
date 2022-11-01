@@ -101,6 +101,7 @@ rhit.MapPageController = class {
 		this.routeManager.beginListening(this.updateRouteDisplay.bind(this));
 		this.initializePopover();
 		this.initializeModal();
+		this.routeLines = [];
 		
 		// document.querySelector("#startRoute").addEventListener("click", (event) => {
 		// 	const startCity = document.querySelector("#cityPlanName").value;
@@ -219,12 +220,35 @@ rhit.MapPageController = class {
 	}
 
 	updateRouteDisplay = () => {
-		console.log("routes updated");
+		for (const line of this.routeLines) {
+			line.remove();
+		}
+		this.routeLines = [];
+		for (const route of this.routeManager.routeList) {
+			const startCityId = route.get(rhit.FB_KEY_START_CITY_ID);
+			const endCityId = route.get(rhit.FB_KEY_END_CITY_ID);
+			const startDate = route.get(rhit.FB_KEY_START_DATE);
+			const dateSegs = startDate.split('/');
+			const processed_startDate = dateSegs[1] + "/" + dateSegs[2];
+			console.log(startDate);
+			const lineOptions = {
+				dash : {animation : true},
+				dropShadow : true,
+				size : 3,
+				color : '#800000',
+				middleLabel :  LeaderLine.captionLabel({text : `${processed_startDate}` , fontSize : '12px'}),
+
+			};
+
+			this.routeLines.push(new LeaderLine(document.querySelector(`img[data-pin-city-id="${startCityId}"]`), document.querySelector(`img[data-pin-city-id="${endCityId}"]`), lineOptions));
+			
+
+		}
 	}
 
 	fetchCityInfo = (cityId) => {
 		//$('#cityDetailModal .modal-title').html(cityId);
-		this.cityManager.getCity(cityId).then(result => this.prepareCityDetailModal(result)); 
+		rhit.cityManager.getCity(cityId).then(result => this.prepareCityDetailModal(result)); 
 	}
 
 	prepareCityDetailModal(cityInfo) {

@@ -12,26 +12,35 @@ body {
     margin-top: 75px;
 }
 
-.map-box {
-    display: grid;
-    height: 100%;
-}
 
 /* #mapPortrait {
     display: none
 } */
 
+.wrapper {
+    display : flex;
+    justify-content: center;
+}
+
+
+/* .map-container {
+    max-width: 70vw;
+} */
+
+#mapLevel {
+    width: 100%;
+}
+
 #newYorkPin {
     position: relative;
-    margin: 0;
     left: 89%;
-    bottom: 61%;
+    bottom: 60%;
 } 
 
 #miamiPin {
     position: relative;
     left: 82%;
-    bottom: 17%;
+    bottom: 18%;
 } 
 
 #laPin {
