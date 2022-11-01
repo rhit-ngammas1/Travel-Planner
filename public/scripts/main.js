@@ -51,21 +51,21 @@ function htmlToElement(html) {
 	return template.content.firstChild;
    }
 
-function validateData(startDate, endDate, budget) {
+rhit.validateData = function(startDate, endDate, budget){
 	let validated = true;
 	if( isNaN(Number(budget)) ){		//checks if budget is a number
 		validated = false;
 	}
-	if(!this.validateDate(startDate)){
+	if(!rhit.validateDate(startDate)){
 		validated = false;
 	}
-	if(!this.validateDate(endDate)){
+	if(!rhit.validateDate(endDate)){
 		validated = false;
 	}
 	return validated;
 }
 
-function validateDate(date){
+rhit.validateDate = function(date){
 	//Check for right pattern: mm/dd/yyyy
 	if(!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(date)) {
 		return false
@@ -573,7 +573,7 @@ rhit.ListPageController = class {
 			const description = document.querySelector("#descripInput").value;
 			
 			const planId = rhit.storage.getPlanId();
-			if(validateData(startDate, endDate, budget)){
+			if(rhit.validateData(startDate, endDate, budget)){
 				rhit.planDetailsManager = new rhit.PlanDetailsManager(planId);
 				rhit.planDetailsManager.edit(startDate, endDate, budget, description);
 			} else {
