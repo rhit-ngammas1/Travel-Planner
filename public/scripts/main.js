@@ -756,7 +756,12 @@ rhit.main = function () {
 	 	$('[data-toggle="popover"]').popover();
 		// $('[data-toggle="modal"]').modal();
 	})
-	
+	$(function() {
+		$('#cityPlanStartDate').datepicker();
+	});
+	$(function() {
+		$('#cityPlanEndDate').datepicker();
+	});
 	
 
 };
