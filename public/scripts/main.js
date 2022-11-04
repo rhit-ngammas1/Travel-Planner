@@ -751,17 +751,29 @@ rhit.main = function () {
 		rhit.routeManager = new rhit.RouteManager(uid);
 		rhit.pageController = new rhit.MapPageController();
 	}
-	
-	$(document).ready(function() {
-	 	$('[data-toggle="popover"]').popover();
-		// $('[data-toggle="modal"]').modal();
+
+	$(document).ready(() => {
+		$('[data-toggle="popover"]').popover();
+		$('#cityPlanStartDate').datepicker().on('show', () => {
+			$('.datepicker').css('transform', 'translateY(90px)');
+			
+		});
+		$('#cityPlanEndDate').datepicker().on('show', () => {
+			$('.datepicker').css('transform', 'translateY(90px)' );
+			
+		});
+		
+		
 	})
-	$(function() {
-		$('#cityPlanStartDate').datepicker();
-	});
-	$(function() {
-		$('#cityPlanEndDate').datepicker();
-	});
+
+	
+	
+
+	// $(function() {
+	// 	$('#cityPlanStartDate').datepicker();
+	// 	$('#cityPlanEndDate').datepicker();
+	// 	$('.datepicker').css('transform', 'translateY(100px)');
+	// });
 	
 
 };
