@@ -5,41 +5,54 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
-    <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
     <link rel="stylesheet" href="styles/main.css">
+    <link href="styles/bootstrap.min.css" rel="stylesheet">
+    <link href="styles/bootstrap-popover-x.css" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Travel Planner</title>
 </head>
 
 <body>
 <!--Drawer-->
-  <div class="bmd-layout-container bmd-drawer-f-l bmd-drawer-overlay">
-    <header class="bmd-layout-header">
-      <div class="navbar navbar-dark bg-faded fixed-top justify-content-start">
-        <button class="navbar-toggler" type="button" data-toggle="drawer" data-target="#dw-s2">
-          <span class="sr-only">Toggle drawer</span>
-          <i class="material-icons">menu</i>
+<nav class="navbar navbar-dark fixed-top">
+    <div class="container-fluid">
+        <a id="navBarTitle" class="navbar-brand" href="/map.html">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;My Movie Quotes</a>
+        <button id="navBarOpenOutline" class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+            aria-controls="offcanvasNavbar">
+            <span id="navBarOpenButt" class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="/map.html">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;My Movie Quotes</a>
-      </div>
-    </header>
-    <div id="dw-s2" class="bmd-layout-drawer bg-faded">
-      <header>
-        <a class="navbar-brand"><strong>TRAVEL PLANNER</strong></a>
-      </header>
-      <ul class="list-group">
-        <a id="myMapButt" class="list-group-item"> <i class="material-icons">travel_explore</i>My Map</a>
-        <a id="myPlansButt" class="list-group-item"> <i class="material-icons">location_city</i>My Trips</a>
-        <a id="signOutMenuButt" class="list-group-item"> <i class="material-icons">logout</i> Sign Out</a>
-      </ul>
-    </div>
-    <main class="bmd-layout-content">
-      <!--Place to add pins/cards in-->
-        <div id="planPage" class="container page-container">
-            <div class="month">May</div>
-                <div id="pinContainer1"></div>
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
+            aria-labelledby="offcanvasNavbarLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">TRAVEL PLANNER</h5>
+                <button id="navBarCloseButt" type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                    <li class="nav-item">
+                        <a id="myMapButt" class="nav-link"> <i class="material-icons">travel_explore</i>My Map</a>
+                    </li>
+                    <li class="nav-item">
+                        <a id="myPlansButt" class="nav-link"> <i class="material-icons">location_city</i>My Trips</a>    
+                    </li>
+                    <li class="nav-item">
+                        <a id="signOutMenuButt" class="nav-link"> <i class="material-icons">logout</i> Sign Out</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </main>
-  </div>
+    </div>
+</nav>
+
+<!--Pin/card Content-->
+<main class="bmd-layout-content">
+    <div id="planPage" class="container page-container">
+         <div class="month">May</div>
+           <div id="pinContainer1"></div>
+    </div>
+</main>
 
    <!-- Example My Plans and Routes -->
     <!-- <div id="planPage" class="container page-container">
@@ -161,13 +174,13 @@
     <div class="modal fade" id="planDetails" tabindex="-1" role="dialog" aria-labelledby="Plan details" aria-hidden="true"> 
         <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-
-            <div class="modal-header">
+            
+            <div id="modalHeader" class="modal-header">
                 <h2 id="detailModalTitle" class="modal-title title">My favorite Plan</h2>
             </div>
-                <div><h5 id="detailModalSubtitle" class="modal-subheader">Seattle Plan</h5></div>
-
-            <div class="modal-body">
+            
+            <div id="modalBody" class="modal-body">
+                <h5 id="detailModalSubtitle" class="modal-subheader">Seattle Plan</h5>
                 <div class="form-group bmd-form-group">          
                     <label for="descripInput" class="bmd-label-static">Description</label>
                     <input type="text" class="form-control" id="descripInput">
@@ -175,7 +188,7 @@
                 <div class="form-group bmd-form-group"> 
                     <label for="startDateInput" class="bmd-label-static">Start Date</label>
                     <input type="text" class="form-control" id="startDateInput">
-                <!-- <span class="bmd-help">What movie is this quote from?</span>   -->
+                    <!-- <span class="bmd-help">What movie is this quote from?</span>   -->
                 </div>
                 <div class="form-group bmd-form-group">          
                     <label for="endDateInput" class="bmd-label-static">End Date</label>
@@ -183,32 +196,42 @@
                 </div>
                 <div class="form-group bmd-form-group">          
                     <label for="budgetInput" class="bmd-label-static">Budget</label>
-                    <input type="text" class="form-control" id="budgetInput">
+                    <input type="number" class="form-control" id="budgetInput" step="100">
                 </div>
                 <div class="form-group bmd-form-group">          
                     <label for="visitInput" class="bmd-label-static">To Visit</label>
                     <input type="text" class="form-control" id="visitInput">
                 </div>               
             </div>
-
+            
             <div class="modal-footer">
-            <button id="planCancelButt" type="button" class="btn btn-secondary" data-dismiss="modal">CANCEL</button>   <!--create button, data-dismiss makes the modal go away after clicking-->
-            <button id="planDoneButt" type="button" class="btn btn-primary" data-dismiss="modal">DONE</button>
+                <button id="planCancelButt" type="button" class="btn btn-secondary" data-dismiss="modal">CANCEL</button>   <!--create button, data-dismiss makes the modal go away after clicking-->
+                <button id="planDoneButt" type="button" class="btn btn-primary" data-dismiss="modal">DONE</button>
+                
             </div>
         </div>
-        </div>
     </div>
-
+    </div>
+    
     <script src="scripts/jquery.min.js"></script>
-    <script src="scripts/popper.js"></script>
-    <script src="scripts/bootstrap-material-design.js"></script>
-    <script>$("body").bootstrapMaterialDesign();</script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="scripts/bootstrap.min.js"></script>
+    <!-- <script src="scripts/popper.js"></script> -->
+
+    <!-- <script src="scripts/bootstrap-material-design.js"></script> -->
+    <!-- <script>$("body").bootstrapMaterialDesign();</script> -->
     <script src="/__/firebase/7.18.0/firebase-app.js"></script>
     <script src="/__/firebase/7.18.0/firebase-analytics.js"></script>
     <script src="/__/firebase/7.18.0/firebase-auth.js"></script>
     <script src="/__/firebase/7.18.0/firebase-firestore.js"></script>
     <script src="/__/firebase/init.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script src="scripts/main.js"></script>
+    <script src="scripts/bootstrap-popover-x.js"></script>
+    <script src="scripts/leader-line.min.js"></script>
 </body>
 
 </html>

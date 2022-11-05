@@ -51,28 +51,64 @@ function htmlToElement(html) {
 	return template.content.firstChild;
    }
 
-rhit.validateData = function(name, budget){
+rhit.validateData = function(name, startDate, endDate, budget){
 	let validated = true;
 	if(name.replace(/\s+/g, '').length == 0){
 		validated = false;
 	}
-	//don't allow negative numbers
-
+	//make sure end date is after start date
+	if(endDate != ""){
+		validated = rhit.validateDate(startDate, endDate);
+	}
 	//disallow budget=0, or auto set to 0 if not set?
-	//which values are req?
-
 	if(budget < 0){		
 		validated = false;
 	}
-
-	// if(!rhit.validateDate(startDate)){
-	// 	validated = false;
-	// }
-	// if(!rhit.validateDate(endDate)){
-	// 	validated = false;
-	// }
 	return validated;
 }
+
+rhit.validateDate = function(startDate, endDate){
+	//Check for right pattern: mm/dd/yyyy
+	// if(!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(date)) {
+	// 	return false
+	// }
+
+	//Split up parts
+	const startParts = startDate.split("/");
+	const startMonth = parseInt(startParts[0], 10);
+	const startDay = parseInt(startParts[1], 10);
+	const startYear = parseInt(startParts[2], 10);
+
+	const endParts = endDate.split("/");
+	const endMonth = parseInt(endParts[0], 10);
+	const endDay = parseInt(endParts[1], 10);
+	const endYear = parseInt(endParts[2], 10);
+
+	//Check that endDate is greater than startDate
+	
+	if(endDay <= startDay){
+		if(endMonth <= startMonth){
+			if(endYear <= startYear){
+				console.log("Bad date");
+				return false;
+			}
+		}
+	}
+
+	// //Check that year and month are correct
+	// if(year < 1000 || year > 3000 || month == 0 || month > 12) {
+    //     return false;
+	// }
+
+	// //Check that day are correct
+	// const monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+	// if(day <= 0 || day > monthLength[month - 1]){
+	// 	return false;
+	// }
+	console.log("Good date");
+	return true;
+}
+
 
 //main page controller
 rhit.MapPageController = class {
@@ -181,7 +217,9 @@ rhit.MapPageController = class {
 			const endDate = document.querySelector("#cityPlanEndDate").value;
 			const budget = document.querySelector("#cityPlanBudget").value;
 			const description = document.querySelector("#cityPlanDescription").value;
-			rhit.planManager.add(cityId, cityName, name, startDate, endDate, budget, description);
+			if(rhit.validateData(name, startDate, endDate, budget)){
+				rhit.planManager.add(cityId, cityName, name, startDate, endDate, budget, description);
+			}
 		});
 
 		$('#submitAddRoute').on('click', (event) => {
@@ -190,7 +228,9 @@ rhit.MapPageController = class {
 			const endDate = $('#routeEndDate').val();
 			const budget = $('#routeBudger').val();
 			const description = $('#routeDescription').val();
-			rhit.routeManager.add(name, startDate, endDate, budget, description);
+			if(rhit.validateData(name, startDate, endDate, budget)){
+				rhit.routeManager.add(name, startDate, endDate, budget, description);
+			}
 		})
 		
 	}
@@ -552,7 +592,8 @@ rhit.ListPageController = class {
 	//initialize modal as well?
 	constructor(){
 		document.querySelector("#planDoneButt").addEventListener("click", (event) => {
-			const name = document.querySelector("#name").value;
+			// const name = document.querySelector("#name").value;    use standin for name since its not editable as of now
+			const name = "placeHolderTitle";
 			const startDate = document.querySelector("#startDateInput").value;
 			const endDate = document.querySelector("#endDateInput").value;
 			const budget = document.querySelector("#budgetInput").value;
@@ -562,8 +603,6 @@ rhit.ListPageController = class {
 			if(rhit.validateData(name, startDate, endDate, budget)){
 				rhit.planDetailsManager = new rhit.PlanDetailsManager(planId);
 				rhit.planDetailsManager.edit(name, startDate, endDate, budget, description);
-			} else {
-				console.log("Data failed validation");
 			}
 		});
 		rhit.planManager.beginListening(this.updateList.bind(this));
@@ -773,28 +812,4 @@ rhit.main();
 
 
 
-// rhit.validateDate = function(date){
-// 	//Check for right pattern: mm/dd/yyyy
-// 	if(!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(date)) {
-// 		return false
-// 	}
 
-// 	//Split up parts
-// 	const parts = date.split("/");
-// 	const month = parseInt(parts[0], 10);
-// 	const day = parseInt(parts[1], 10);
-// 	const year = parseInt(parts[2], 10);
-
-// 	//Check that year and month are correct
-// 	if(year < 1000 || year > 3000 || month == 0 || month > 12) {
-//         return false;
-// 	}
-
-// 	//Check that day are correct
-// 	const monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-// 	if(day <= 0 || day > monthLength[month - 1]){
-// 		return false;
-// 	}
-// 	console.log("Date checking works");
-// 	return true;
-// }
