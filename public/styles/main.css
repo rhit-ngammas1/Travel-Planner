@@ -94,23 +94,6 @@ body {
     font-size: 1.5em;
 }
 
-/*Drawer --------------------------Delete*/
-.bmd-layout-content{
-    height: 100vh; /*make it 100% of the viewport height*/
-}
-.bmd-layout-drawer>header {             
-    background-color: #800000;
-    color: white;
-}
-.bmd-layout-drawer>ul {
-    background-color: white;
-}
-
-.list-group-item :first-child {     /*space inbetween icon and button for drawer*/
-    margin-right: 0.75rem;
-}
-/*-----------------------------delete all*/
-
 /*New Drawer*/
 .bg-dark {
     --bs-bg-opacity: 1;

@@ -54,5 +54,27 @@ body {
     height: 100vw;
 }
 
+/*New Drawer*/
+.bg-dark {
+    --bs-bg-opacity: 1;
+    background-color: rgba(#800000,var(--bs-bg-opacity))!important;
+}
+#navBarTitle, #navBarOpenOutline{
+    color:white;
+}
+.offcanvas-header, .offcanvas-body{
+    background-color: #800000;
+}
+.offcanvas-header{
+    border-color: white;
+}
+.nav-item .nav-link, .material-icons{
+    color: white;
+}
+
+.nav-item :first-child {     /*space inbetween icon and button for drawer*/
+    margin-right: 0.75rem;
+}
+
 
 

@@ -126,6 +126,16 @@ rhit.MapPageController = class {
 		// 	const startCity = document.querySelector("#cityPlanName").value;
 		// });
 
+		//PUT INTO OWN NAV CONTROLLER??
+		document.querySelector("#myMapButt").addEventListener("click", (event) => {
+			window.location.href="/map.html"
+		});
+		document.querySelector("#myPlansButt").addEventListener("click", (event) => {
+			window.location.href="/plan.html"
+		});
+		document.querySelector("#signOutMenuButt").addEventListener("click", (event) => {
+			rhit.fbAuthManager.signOut();
+		});
 	}
 
 	initializePopover = () => {
@@ -587,6 +597,7 @@ rhit.city = class {
 		this.info = info;
 	}
 }
+
 
 rhit.ListPageController = class {
 	//initialize modal as well?
