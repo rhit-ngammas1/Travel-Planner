@@ -29,6 +29,10 @@ body {
     z-index: 999;               
 }
 
+.modal-subheader{
+    padding: 5px 24px 0px;
+}
+
 
 .pin img {
    float:left; 
@@ -59,7 +63,7 @@ body {
     overflow: hidden;
 } */
 
-.startDate,.budget, .title{
+.start-date,.budget, .title, .travel-type{
     font-weight: bold;
 }
 

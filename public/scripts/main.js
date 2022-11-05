@@ -51,44 +51,27 @@ function htmlToElement(html) {
 	return template.content.firstChild;
    }
 
-rhit.validateData = function(startDate, endDate, budget){
+rhit.validateData = function(name, budget){
 	let validated = true;
-	if( isNaN(Number(budget)) ){		//checks if budget is a number
+	if(name.replace(/\s+/g, '').length == 0){
 		validated = false;
 	}
-	if(!rhit.validateDate(startDate)){
+	//don't allow negative numbers
+
+	//disallow budget=0, or auto set to 0 if not set?
+	//which values are req?
+
+	if(budget < 0){		
 		validated = false;
 	}
-	if(!rhit.validateDate(endDate)){
-		validated = false;
-	}
+
+	// if(!rhit.validateDate(startDate)){
+	// 	validated = false;
+	// }
+	// if(!rhit.validateDate(endDate)){
+	// 	validated = false;
+	// }
 	return validated;
-}
-
-rhit.validateDate = function(date){
-	//Check for right pattern: mm/dd/yyyy
-	if(!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(date)) {
-		return false
-	}
-
-	//Split up parts
-	const parts = date.split("/");
-	const month = parseInt(parts[0], 10);
-	const day = parseInt(parts[1], 10);
-	const year = parseInt(parts[2], 10);
-
-	//Check that year and month are correct
-	if(year < 1000 || year > 3000 || month == 0 || month > 12) {
-        return false;
-	}
-
-	//Check that day are correct
-	const monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-	if(day <= 0 || day > monthLength[month - 1]){
-		return false;
-	}
-	console.log("Date checking works");
-	return true;
 }
 
 //main page controller
@@ -198,7 +181,7 @@ rhit.MapPageController = class {
 			const endDate = document.querySelector("#cityPlanEndDate").value;
 			const budget = document.querySelector("#cityPlanBudget").value;
 			const description = document.querySelector("#cityPlanDescription").value;
-			rhit.planManager.add(cityId, cityName, name,startDate,endDate,budget,description);
+			rhit.planManager.add(cityId, cityName, name, startDate, endDate, budget, description);
 		});
 
 		$('#submitAddRoute').on('click', (event) => {
@@ -318,6 +301,7 @@ rhit.CityManager = class {
 
 rhit.Plan = class {
 	constructor(id, cityId, cityName, name, startDate, endDate, budget, description, author, timestamp) {
+		this.type = "Plan";
 		this.id = id;
 		this.cityId = cityId; 
 		this.cityName = cityName;
@@ -354,9 +338,10 @@ rhit.PlanDetailsManager  = class {
 	stopListening() {
 	  this._unsubscribe();
 	}
-	edit(startDate, endDate, budget, description){
+	edit(name, startDate, endDate, budget, description){
 		console.log(`Document being edited: ${this._planDoc}`)
 		this._planDoc.update({
+			[rhit.FB_KEY_NAME]: name,
 			[rhit.FB_KEY_START_DATE]: startDate,
 			[rhit.FB_KEY_END_DATE]: endDate,
 			[rhit.FB_KEY_BUDGET]: budget,
@@ -418,13 +403,13 @@ rhit.PlanManager = class {
 	// 	this._unsubscribe();		
 	// }
 
-	add(cityId, cityName, name,startDate,endDate,budget,description){
+	add(cityId, cityName, name, startDate, endDate, budget, description){
 		this.planCollection.add({
 			[rhit.FB_KEY_CITY_ID]: cityId,
 			[rhit.FB_KEY_CITY_NAME]: cityName,
 			[rhit.FB_KEY_NAME]: name,
-			[rhit.FB_KEY_START_DATE]: startDate,		//firebase.firestore.Timestamp.fromDate(new Date("December 10, 1815"))
-			[rhit.FB_KEY_END_DATE]: endDate,			//firebase.firestore.Timestamp.fromDate(new Date("December 10, 1815"))
+			[rhit.FB_KEY_START_DATE]: startDate,		
+			[rhit.FB_KEY_END_DATE]: endDate,			
 			[rhit.FB_KEY_BUDGET]: budget,
 			[rhit.FB_KEY_DESCRIPTION]: description,
 			[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
@@ -567,15 +552,16 @@ rhit.ListPageController = class {
 	//initialize modal as well?
 	constructor(){
 		document.querySelector("#planDoneButt").addEventListener("click", (event) => {
+			const name = document.querySelector("#name").value;
 			const startDate = document.querySelector("#startDateInput").value;
 			const endDate = document.querySelector("#endDateInput").value;
 			const budget = document.querySelector("#budgetInput").value;
 			const description = document.querySelector("#descripInput").value;
 			
 			const planId = rhit.storage.getPlanId();
-			if(rhit.validateData(startDate, endDate, budget)){
+			if(rhit.validateData(name, startDate, endDate, budget)){
 				rhit.planDetailsManager = new rhit.PlanDetailsManager(planId);
-				rhit.planDetailsManager.edit(startDate, endDate, budget, description);
+				rhit.planDetailsManager.edit(name, startDate, endDate, budget, description);
 			} else {
 				console.log("Data failed validation");
 			}
@@ -617,7 +603,8 @@ rhit.ListPageController = class {
 		oldList.parentElement.appendChild(newList);
 	}
 	updateModalDetails(plan) {  
-		document.querySelector("#detailModalTitle").innerHTML = `${plan.cityName} Plan`; 
+		document.querySelector("#detailModalTitle").innerHTML = plan.name;
+		document.querySelector("#detailModalSubtitle").innerHTML = `${plan.cityName} Plan`; 
 		document.querySelector("#startDateInput").value = plan.startDate;
 		document.querySelector("#endDateInput").value = plan.endDate;
 		document.querySelector("#budgetInput").value = plan.budget;
@@ -634,12 +621,16 @@ rhit.ListPageController = class {
 							class='iconDetails'>
 					</div>
 					<div style='margin-left:120px;'>
-						<h4 class="title">${plan.cityName} Plan</h4>
-						<span class="startDate" style="font-size:1em">Start Date- </span>
-						<span class="startDateValue" style="font-size:1em">${plan.startDate}</span>
+						<h4 class="title">${plan.name}</h4>
+						<div></div>
+						<span class="travel-type" style="font-size:1em">${plan.type}- </span>
+						<span class="travel-type-value" style="font-size:1em">${plan.cityName}</span>
+						<div></div>
+						<span class="start-date" style="font-size:1em">Start Date- </span>
+						<span class="start-date-value" style="font-size:1em">${plan.startDate}</span>
 						<div></div>
 						<span class="budget" style="font-size:1em">Budget- </span>
-						<span class="budgetValue" style="font-size:1em">$${plan.budget}</span>
+						<span class="budget-value" style="font-size:1em">$${plan.budget}</span>
 					</div>
 					<button id="fab" type="button" class="btn bmd-btn-fab">
 						<i class="material-icons">close</i>
@@ -779,3 +770,31 @@ rhit.main = function () {
 };
 
 rhit.main();
+
+
+
+// rhit.validateDate = function(date){
+// 	//Check for right pattern: mm/dd/yyyy
+// 	if(!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(date)) {
+// 		return false
+// 	}
+
+// 	//Split up parts
+// 	const parts = date.split("/");
+// 	const month = parseInt(parts[0], 10);
+// 	const day = parseInt(parts[1], 10);
+// 	const year = parseInt(parts[2], 10);
+
+// 	//Check that year and month are correct
+// 	if(year < 1000 || year > 3000 || month == 0 || month > 12) {
+//         return false;
+// 	}
+
+// 	//Check that day are correct
+// 	const monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+// 	if(day <= 0 || day > monthLength[month - 1]){
+// 		return false;
+// 	}
+// 	console.log("Date checking works");
+// 	return true;
+// }
