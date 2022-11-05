@@ -140,9 +140,9 @@
   </div>
 
   <!--Navbar/drawer-->
-  <nav class="navbar navbar-dark fixed-top justify-content-center">
+  <!-- <nav class="navbar navbar-dark fixed-top justify-content-center">
     <div class="header-text-container">
-      <a class="navbar-brand" href="#">Where do you want to go?</a>
+      <a class="navbar-brand" href="#">Where do you want to go?</a> -->
       <!-- <div class="dropdown pull-xs-right">
         <button class="btn bmd-btn-icon dropdown-toggle" type="button" id="lr1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="material-icons">more_vert</i>
@@ -152,8 +152,38 @@
             <i class="material-icons">logout</i>&nbsp;&nbsp;&nbsp;Sign Out</button>
         </div>
       </div> -->
+    <!-- </div>
+  </nav> -->
+
+  <nav class="navbar navbar-dark fixed-top">
+    <div class="container-fluid">
+          <a id="navBarTitle" class="navbar-brand" href="#">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Where do you want to go?</a>
+        <button id="navBarOpenOutline" class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+            aria-controls="offcanvasNavbar">
+            <span id="navBarOpenButt" class="navbar-toggler-icon"></span>
+        </button>
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
+            aria-labelledby="offcanvasNavbarLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">TRAVEL PLANNER</h5>
+                <button id="navBarCloseButt" type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                    <li class="nav-item">
+                        <a id="myMapButt" class="nav-link"> <i class="material-icons">travel_explore</i>My Map</a>
+                    </li>
+                    <li class="nav-item">
+                        <a id="myPlansButt" class="nav-link"> <i class="material-icons">location_city</i>My Trips</a>    
+                    </li>
+                    <li class="nav-item">
+                        <a id="signOutMenuButt" class="nav-link"> <i class="material-icons">logout</i> Sign Out</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
-  </nav>
+</nav>
 
 
   <div id="mainPage" class="container page-container justify-content-center">

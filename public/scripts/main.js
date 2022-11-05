@@ -625,15 +625,16 @@ rhit.ListPageController = class {
 
 		for (let i = 0; i < rhit.planManager.length; i++){
 			const plan = rhit.planManager.getPlanAtIndex(i);
-			const newCard = this._createCard(plan);
-
-			newCard.onclick = (event) => {						
-				console.log("Clicked on card with id: ", plan.id);
-				rhit.storage.setPlanId(plan.id);
-				this.updateModalDetails(plan);
-			};
-
-			newList.appendChild(newCard);
+			rhit.cityManager.getCity(plan.cityId).then(cityData => {		//get city data, and then use img file path in that data to create a card
+				const newCard = this._createCard(plan, cityData);
+				newCard.onclick = (event) => {						
+					console.log("Clicked on card with id: ", plan.id);
+					rhit.storage.setPlanId(plan.id);
+					this.updateModalDetails(plan);
+				};
+	
+				newList.appendChild(newCard);
+			});
 		}
 
 		const oldList = document.querySelector("#pinContainer1");		//will have to do for multiple pinContainers
@@ -650,25 +651,13 @@ rhit.ListPageController = class {
 		document.querySelector("#descripInput").value = plan.description;
 	}
 
-	fetchCityPic(cityId) {
-		rhit.cityManager.getCity(cityId).then(result => {
-			console.log(result.imgSrc[0]);
-			return result.imgSrc[0];
-		});
-	}
-
-	
 	//Helper Functions
-	_createCard(plan) {
-		const profilePic= "city_imgs/newYork1.jpg";
-		// const profilePic = this.fetchCityInfo(plan.cityId);
-		// console.log("profile pic: ", profilePic);
-
+	_createCard(plan, profilePic){
 		return htmlToElement(`
 			<div>
 				<div class="pin" data-toggle="modal" data-target="#planDetails">
 					<div>
-						<img src=${profilePic} class='iconDetails'>
+						<img src=${profilePic.imgSrc[0]} class='iconDetails'>
 					</div>
 					<div style='margin-left:120px;'>
 						<h4 class="title">${plan.name}</h4>
