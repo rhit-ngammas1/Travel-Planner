@@ -74,13 +74,16 @@ body {
     font-weight: bold;
 }
 
-#fab {
+#deletePlanOrRoute {
     position: absolute;
     top:  10px;
     right: 10px;
-    color: orange;
     z-index: 999;
     box-shadow: none;
+}
+
+#deletePlanOrRoute > .material-icons{
+    color: #800000;
 }
 
 .bmd-btn-fab:active {                       

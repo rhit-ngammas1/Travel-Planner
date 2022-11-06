@@ -230,7 +230,7 @@ rhit.MapPageController = class {
 			if (rhit.validateData(name, startDate, endDate, budget)) {
 				rhit.planManager.add(cityId, cityName, name, startDate, endDate, budget, description);
 			}
-			window.location.href = "/plan.html"
+			// window.location.href = "/plan.html"
 		});
 
 		$('#submitAddRoute').on('click', (event) => {
@@ -468,6 +468,8 @@ rhit.PlanManager = class {
 		})
 			.then((docRef) => {
 				console.log("Plan written with ID: ", docRef.id);
+				window.location.href = "/plan.html"
+
 			})
 			.catch((error) => {
 				console.error("Error adding plan: ", error);
@@ -489,7 +491,10 @@ rhit.PlanManager = class {
 		);
 		return plan;
 	}
-
+	delete() {
+		const id = rhit.storage.getPlanId();
+		return this.planCollection.doc(id).delete();
+	}
 	get length() {
 		return this.cityList.length;
 	}
@@ -628,6 +633,9 @@ rhit.ListPageController = class {
 		document.querySelector("#signOutMenuButt").addEventListener("click", (event) => {
 			rhit.fbAuthManager.signOut();
 		});
+		document.querySelector("#submitDeletePlan").addEventListener("click", (event) => {
+			rhit.planManager.delete();
+		});
 
 	}
 
@@ -755,7 +763,7 @@ rhit.ListPageController = class {
 						<span class="budget" style="font-size:1em">Budget- </span>
 						<span class="budget-value" style="font-size:1em">$${plan.budget}</span>
 					</div>
-					<button id="fab" type="button" class="btn bmd-btn-fab">
+					<button id="deletePlanOrRoute" type="button" class="btn bmd-btn-fab" data-toggle="modal" data-target="#deletePlanDialog">
 						<i class="material-icons">close</i>
 					</button>
 				</div>
