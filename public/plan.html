@@ -15,46 +15,72 @@
 </head>
 
 <body>
-<!--Drawer-->
-<nav class="navbar navbar-dark fixed-top">
-    <div class="container-fluid">
-        <a id="navBarTitle" class="navbar-brand" href="/map.html">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;My Movie Quotes</a>
-        <button id="navBarOpenOutline" class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
-            aria-controls="offcanvasNavbar">
-            <span id="navBarOpenButt" class="navbar-toggler-icon"></span>
-        </button>
-        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
-            aria-labelledby="offcanvasNavbarLabel">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">TRAVEL PLANNER</h5>
-                <button id="navBarCloseButt" type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body">
-                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                    <li class="nav-item">
-                        <a id="myMapButt" class="nav-link"> <i class="material-icons">travel_explore</i>My Map</a>
-                    </li>
-                    <li class="nav-item">
-                        <a id="myPlansButt" class="nav-link"> <i class="material-icons">location_city</i>My Trips</a>    
-                    </li>
-                    <li class="nav-item">
-                        <a id="signOutMenuButt" class="nav-link"> <i class="material-icons">logout</i> Sign Out</a>
-                    </li>
-                </ul>
+    <!--Drawer-->
+    <nav class="navbar navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a id="navBarTitle" class="navbar-brand" href="/map.html">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;My Plan and
+                Routes</a>
+            <button id="navBarOpenOutline" class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+                <span id="navBarOpenButt" class="navbar-toggler-icon"></span>
+            </button>
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
+                aria-labelledby="offcanvasNavbarLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">TRAVEL PLANNER</h5>
+                    <button id="navBarCloseButt" type="button" class="btn-close btn-close-white"
+                        data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <li class="nav-item">
+                            <a id="myMapButt" class="nav-link"> <i class="material-icons">travel_explore</i>My Map</a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="myPlansButt" class="nav-link"> <i class="material-icons">location_city</i>My
+                                Trips</a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="signOutMenuButt" class="nav-link"> <i class="material-icons">logout</i> Sign Out</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<!--Pin/card Content-->
-<main class="bmd-layout-content">
-    <div id="planPage" class="container page-container">
-         <div class="month">May</div>
-           <div id="pinContainer1"></div>
-    </div>
-</main>
+    <!--Pin/card Content-->
+    <main class="bmd-layout-content">
+        <div id="planPage" class="container page-container">
+            <div class="jan"></div>
+            <div id="janList"></div>
+            <div class="feb"></div>
+            <div id="febList"></div>
+            <div class="mar"></div>
+            <div id="marList"></div>
+            <div class="apr"></div>
+            <div id="aprilList"></div>
+            <div class="may"></div>
+            <div id="mayList"></div>
+            <div class="jun"></div>
+            <div id="junList"></div>
+            <div class="jul"></div>
+            <div id="julList"></div>
+            <div class="aug"></div>
+            <div id="augList"></div>
+            <div class="sep"></div>
+            <div id="sepList"></div>
+            <div class="oct"></div>
+            <div id="octList"></div>
+            <div class="nov"></div>
+            <div id="novList"></div>
+            <div class="dec"></div>
+            <div id="decList"></div>
 
-   <!-- Example My Plans and Routes -->
+        </div>
+    </main>
+
+    <!-- Example My Plans and Routes -->
     <!-- <div id="planPage" class="container page-container">
         <div class="month">May</div>
             <div id="pinContainer1">
@@ -171,48 +197,50 @@
     </div> -->
 
     <!-- Modal -->
-    <div class="modal fade" id="planDetails" tabindex="-1" role="dialog" aria-labelledby="Plan details" aria-hidden="true"> 
+    <div class="modal fade" id="planDetails" tabindex="-1" role="dialog" aria-labelledby="Plan details"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            
-            <div id="modalHeader" class="modal-header">
-                <h2 id="detailModalTitle" class="modal-title title">My favorite Plan</h2>
-            </div>
-            
-            <div id="modalBody" class="modal-body">
-                <h5 id="detailModalSubtitle" class="modal-subheader">Seattle Plan</h5>
-                <div class="form-group bmd-form-group">          
-                    <label for="descripInput" class="bmd-label-static">Description</label>
-                    <input type="text" class="form-control" id="descripInput">
+            <div class="modal-content">
+
+                <div id="modalHeader" class="modal-header">
+                    <h2 id="detailModalTitle" class="modal-title title">My favorite Plan</h2>
                 </div>
-                <div class="form-group bmd-form-group"> 
-                    <label for="startDateInput" class="bmd-label-static">Start Date</label>
-                    <input type="text" class="form-control" id="startDateInput">
-                    <!-- <span class="bmd-help">What movie is this quote from?</span>   -->
+
+                <div id="modalBody" class="modal-body">
+                    <h5 id="detailModalSubtitle" class="modal-subheader">Seattle Plan</h5>
+                    <div class="form-group bmd-form-group">
+                        <label for="descripInput" class="bmd-label-static">Description</label>
+                        <input type="text" class="form-control" id="descripInput">
+                    </div>
+                    <div class="form-group bmd-form-group">
+                        <label for="startDateInput" class="bmd-label-static">Start Date</label>
+                        <input type="text" class="form-control" id="startDateInput">
+                    </div>
+                    <div class="form-group bmd-form-group">
+                        <label for="endDateInput" class="bmd-label-static">End Date</label>
+                        <input type="text" class="form-control" id="endDateInput">
+                    </div>
+                    <div class="form-group bmd-form-group">
+                        <label for="budgetInput" class="bmd-label-static">Budget</label>
+                        <input type="number" class="form-control" id="budgetInput" step="100">
+                    </div>
+                    <div class="form-group bmd-form-group">
+                        <label for="visitInput" class="bmd-label-static">To Visit</label>
+                        <input type="text" class="form-control" id="visitInput">
+                    </div>
                 </div>
-                <div class="form-group bmd-form-group">          
-                    <label for="endDateInput" class="bmd-label-static">End Date</label>
-                    <input type="text" class="form-control" id="endDateInput">
+
+                <div class="modal-footer">
+                    <button id="planCancelButt" type="button" class="btn btn-secondary"
+                        data-dismiss="modal">CANCEL</button>
+                    <!--create button, data-dismiss makes the modal go away after clicking-->
+                    <button id="planDoneButt" type="button" class="btn btn-primary" data-dismiss="modal">DONE</button>
+
                 </div>
-                <div class="form-group bmd-form-group">          
-                    <label for="budgetInput" class="bmd-label-static">Budget</label>
-                    <input type="number" class="form-control" id="budgetInput" step="100">
-                </div>
-                <div class="form-group bmd-form-group">          
-                    <label for="visitInput" class="bmd-label-static">To Visit</label>
-                    <input type="text" class="form-control" id="visitInput">
-                </div>               
-            </div>
-            
-            <div class="modal-footer">
-                <button id="planCancelButt" type="button" class="btn btn-secondary" data-dismiss="modal">CANCEL</button>   <!--create button, data-dismiss makes the modal go away after clicking-->
-                <button id="planDoneButt" type="button" class="btn btn-primary" data-dismiss="modal">DONE</button>
-                
             </div>
         </div>
     </div>
-    </div>
-    
+
     <script src="scripts/jquery.min.js"></script>
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="scripts/bootstrap.min.js"></script>
