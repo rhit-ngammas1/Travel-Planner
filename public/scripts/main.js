@@ -608,6 +608,8 @@ rhit.city = class {
 rhit.ListPageController = class {
 	//initialize modal as well?
 	constructor() {
+		let readyForDelete = 0;
+
 		document.querySelector("#planDoneButt").addEventListener("click", (event) => {
 			// const name = document.querySelector("#name").value;    use standin for name since its not editable as of now
 			const name = "placeHolderTitle";
@@ -634,13 +636,22 @@ rhit.ListPageController = class {
 			rhit.fbAuthManager.signOut();
 		});
 		document.querySelector("#submitDeletePlan").addEventListener("click", (event) => {
+			console.log("Clicked submit deletion");
 			rhit.planManager.delete();
+			this.updateList();
 		});
+
+		// $('#deletePlanOrRoute').on('click', function(){
+		// 	console.log('click the delete pin button')
+		// 	return false
+		// })		
 
 	}
 
 	//Update Viewer
 	updateList() {
+
+
 		const newJan = htmlToElement('<div id="janList"></div');		//make number a var, corresponding to each of the 12 months
 		const newFeb = htmlToElement('<div id="febList"></div');
 		const newMar = htmlToElement('<div id="marList"></div');
@@ -665,12 +676,59 @@ rhit.ListPageController = class {
 				const startDate = plan.startDate;
 				const startParts = startDate.split('/');
 				const startMonth = parseInt(startParts[0], 10);
-				console.log(startMonth);
-				if (startMonth == 11) {
-					newNov.appendChild(newCard);
-					document.querySelector(".nov").innerHTML = "November";
+				switch (startMonth){
+					case 1:
+						newJan.appendChild(newCard);
+						document.querySelector(".jan").innerHTML = "January";
+						break;
+					case 2:
+						newFeb.appendChild(newCard);
+						document.querySelector(".feb").innerHTML = "February";
+						break;
+					case 3:
+						newMar.appendChild(newCard);
+						document.querySelector(".mar").innerHTML = "March";
+						break;
+					case 4:
+						newApr.appendChild(newCard);
+						document.querySelector(".apr").innerHTML = "April";
+						break;
+					case 5:
+						newMay.appendChild(newCard);
+						document.querySelector(".may").innerHTML = "May";
+						break;
+					case 6:
+						newJun.appendChild(newCard);
+						document.querySelector(".jun").innerHTML = "June";
+						break;
+					case 7:
+						newJul.appendChild(newCard);
+						document.querySelector(".jul").innerHTML = "July";
+						break;
+					case 8:
+						newAug.appendChild(newCard);
+						document.querySelector(".aug").innerHTML = "August";
+						break;
+					case 9:
+						newSep.appendChild(newCard);
+						document.querySelector(".sep").innerHTML = "September";
+						break;
+					case 10:
+						newOct.appendChild(newCard);
+						document.querySelector(".oct").innerHTML = "October";
+						break;
+					case 11:
+						console.log("IN NOV");
+						console.log("Plan: ", plan);
+						console.log("Plan date:", plan.startDate);
+						newNov.appendChild(newCard);
+						document.querySelector(".nov").innerHTML = "November";
+						break;
+					case 12:
+						newDec.appendChild(newCard);
+						document.querySelector(".dec").innerHTML = "December";
+						break;	
 				}
-				// newJan.appendChild(newCard);
 			});
 		}
 
@@ -680,59 +738,59 @@ rhit.ListPageController = class {
 		oldJan.parentElement.appendChild(newJan);
 
 		const oldFeb = document.querySelector("#febList");
-		oldJan.removeAttribute("id");
-		oldJan.hidden = true;
-		oldJan.parentElement.appendChild(newFeb);
+		oldFeb.removeAttribute("id");
+		oldFeb.hidden = true;
+		oldFeb.parentElement.appendChild(newFeb);
 
 		const oldMar = document.querySelector("#marList");
-		oldJan.removeAttribute("id");
-		oldJan.hidden = true;
-		oldJan.parentElement.appendChild(newMar);
+		oldMar.removeAttribute("id");
+		oldMar.hidden = true;
+		oldMar.parentElement.appendChild(newMar);
 
-		const oldApr = document.querySelector("#aprList");
-		oldJan.removeAttribute("id");
-		oldJan.hidden = true;
-		oldJan.parentElement.appendChild(newApr);
+		// const oldApr = document.querySelector("#aprList");
+		// oldApr.removeAttribute("id");
+		// oldApr.hidden = true;
+		// oldApr.parentElement.appendChild(newApr);
 
 		const oldMay = document.querySelector("#mayList");
-		oldJan.removeAttribute("id");
-		oldJan.hidden = true;
-		oldJan.parentElement.appendChild(newMay);
+		oldMay.removeAttribute("id");
+		oldMay.hidden = true;
+		oldMay.parentElement.appendChild(newMay);
 
 		const oldJun = document.querySelector("#junList");
-		oldJan.removeAttribute("id");
-		oldJan.hidden = true;
-		oldJan.parentElement.appendChild(newJun);
+		oldJun.removeAttribute("id");
+		oldJun.hidden = true;
+		oldJun.parentElement.appendChild(newJun);
 
 		const oldJul = document.querySelector("#julList");
-		oldJan.removeAttribute("id");
-		oldJan.hidden = true;
-		oldJan.parentElement.appendChild(newJul);
+		oldJul.removeAttribute("id");
+		oldJul.hidden = true;
+		oldJul.parentElement.appendChild(newJul);
 
 		const oldAug = document.querySelector("#augList");
-		oldJan.removeAttribute("id");
-		oldJan.hidden = true;
-		oldJan.parentElement.appendChild(newAug);
+		oldAug.removeAttribute("id");
+		oldAug.hidden = true;
+		oldAug.parentElement.appendChild(newAug);
 
 		const oldSep = document.querySelector("#sepList");
-		oldJan.removeAttribute("id");
-		oldJan.hidden = true;
-		oldJan.parentElement.appendChild(newSep);
+		oldSep.removeAttribute("id");
+		oldSep.hidden = true;
+		oldSep.parentElement.appendChild(newSep);
 
 		const oldOct = document.querySelector("#octList");
-		oldJan.removeAttribute("id");
-		oldJan.hidden = true;
-		oldJan.parentElement.appendChild(newOct);
+		oldOct.removeAttribute("id");
+		oldOct.hidden = true;
+		oldOct.parentElement.appendChild(newOct);
 
 		const oldNov = document.querySelector("#novList");
-		oldJan.removeAttribute("id");
-		oldJan.hidden = true;
-		oldJan.parentElement.appendChild(newNov);
+		oldNov.removeAttribute("id");
+		oldNov.hidden = true;
+		oldNov.parentElement.appendChild(newNov);
 
 		const oldDec = document.querySelector("#decList");
-		oldJan.removeAttribute("id");
-		oldJan.hidden = true;
-		oldJan.parentElement.appendChild(newDec);
+		oldDec.removeAttribute("id");
+		oldDec.hidden = true;
+		oldDec.parentElement.appendChild(newDec);
 	}
 	updateModalDetails(plan) {
 		document.querySelector("#detailModalTitle").innerHTML = plan.name;
@@ -747,21 +805,23 @@ rhit.ListPageController = class {
 	_createCard(plan, cityData) {
 		return htmlToElement(`
 			<div>
-				<div class="pin" data-toggle="modal" data-target="#planDetails">
-					<div>
-						<img src=${cityData.imgSrc[0]} class='iconDetails'>
-					</div>
-					<div style='margin-left:120px;'>
-						<h4 class="title">${plan.name}</h4>
-						<div></div>
-						<span class="travel-type" style="font-size:1em">${plan.type} for </span>
-						<span class="travel-type-value" style="font-size:1em">${plan.cityName}</span>
-						<div></div>
-						<span class="start-date" style="font-size:1em">Start Date- </span>
-						<span class="start-date-value" style="font-size:1em">${plan.startDate}</span>
-						<div></div>
-						<span class="budget" style="font-size:1em">Budget- </span>
-						<span class="budget-value" style="font-size:1em">$${plan.budget}</span>
+				<div class="pin">
+					<div data-toggle="modal" data-target="#planDetails">
+						<div>
+							<img src=${cityData.imgSrc[0]} class='iconDetails'>
+						</div>
+						<div style='margin-left:120px;'>
+							<h4 class="title">${plan.name}</h4>
+							<div></div>
+							<span class="travel-type" style="font-size:1em">${plan.type}</span>
+							<span class="travel-type-value" style="font-size:1em">for ${plan.cityName}</span>
+							<div></div>
+							<span class="start-date" style="font-size:1em">Start Date- </span>
+							<span class="start-date-value" style="font-size:1em">${plan.startDate}</span>
+							<div></div>
+							<span class="budget" style="font-size:1em">Budget- </span>
+							<span class="budget-value" style="font-size:1em">$${plan.budget}</span>
+						</div>
 					</div>
 					<button id="deletePlanOrRoute" type="button" class="btn bmd-btn-fab" data-toggle="modal" data-target="#deletePlanDialog">
 						<i class="material-icons">close</i>
