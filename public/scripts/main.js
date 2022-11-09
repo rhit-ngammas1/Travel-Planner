@@ -107,23 +107,23 @@ rhit.validateData = (data) => {
 
 	if (data['endYear'] == undefined) {
 		issues.push('endDate empty');
-	} 
+	}
 
 	if (data['startYear'] == undefined) {
 		issues.push('startDate empty');
 	}
-	
+
 	if (data['endYear'] != undefined && data['startYear'] != undefined) {
 		if (data['endYear'] < data['startYear']) {
 			issues.push('endDate before startDate');
-		} else if (data['endYear'] == data['startYear']){
+		} else if (data['endYear'] == data['startYear']) {
 			if (data['endDate'] < data['startDate']) {
 				issues.push('endDate before startDate');
 			}
 		}
 	}
-	
-	
+
+
 
 	for (let key in data) {
 		if (dateKeys.includes(key)) continue; //skip date values, since they have been verified
@@ -186,10 +186,11 @@ rhit.validateData = (data) => {
 rhit.MapPageController = class {
 
 	constructor() {
-		rhit.planAndRouteManager.beginListening(this.updateAll.bind(this));
+		rhit.planAndRouteManager.beginListening(this.updateAllViews.bind(this));
 		this.initializePopover();
 		this.initializeModal();
 		this.routeLines = [];
+		this.routeDisplay = true;
 
 		// document.querySelector("#startRoute").addEventListener("click", (event) => {
 		// 	const startCity = document.querySelector("#cityPlanName").value;
@@ -205,6 +206,25 @@ rhit.MapPageController = class {
 		document.querySelector("#signOutMenuButt").addEventListener("click", (event) => {
 			rhit.fbAuthManager.signOut();
 		});
+
+		$('#clrRouteSelBtn').on('click', (event) => {
+			rhit.planAndRouteManager.routeState = 0;
+			$('[data-toggle="popover"]').popover('hide');
+			this.updateDisplayRouteSelection();
+		})
+
+		$('#mapLevel').on('click', (event) => {
+			$('[data-toggle="popover"]').popover('hide');
+		})
+
+		$('#closeAllPopover').on('click', () => {
+			$('[data-toggle="popover"]').popover('hide');
+		})
+
+		$('#toggleRouteDisplay').on('click', () => {
+			this.routeDisplay = !this.routeDisplay;
+			this.updateAllViews();
+		})
 	}
 
 	initializePopover = () => {
@@ -223,15 +243,15 @@ rhit.MapPageController = class {
 					</div>  
 					`
 			} else if (rhit.planAndRouteManager.routeState == 1) {
-				// if (target_city_id == rhit.planAndRouteManager.startCityId) {
-				// 	btn_grp = `
-				// 	<div class="container justify-content-center">
-				// 		<div class='city-btn'><button class="btn btn-primary btn-sm city-detail-btn" style="margin: 4px 0px 2px 0px; width: 100%" data-bs-toggle="modal" data-bs-target="#cityDetailModal" data-city-id="${target_city_id}" data-city-name="${target_city_name}">Detail</button></div>
-				// 		<div class='city-btn'><button class="btn btn-success btn-sm add-dest-btn" style="margin: 2px 0px 2px 0px; width: 100%" data-bs-toggle="modal" data-bs-target="#addDestModal" data-city-id="${target_city_id}" data-city-name="${target_city_name}">Create Plan</button></div>
-				// 	</div>  
-				// 	`
-				// }
-				btn_grp = `
+				if (target_city_id == rhit.planAndRouteManager.startCityId) {
+					btn_grp = `
+					<div class="container justify-content-center">
+						<div class='city-btn'><button class="btn btn-primary btn-sm city-detail-btn" style="margin: 4px 0px 2px 0px; width: 100%" data-bs-toggle="modal" data-bs-target="#cityDetailModal" data-city-id="${target_city_id}" data-city-name="${target_city_name}">Detail</button></div>
+						<div class='city-btn'><button class="btn btn-success btn-sm add-dest-btn" style="margin: 2px 0px 2px 0px; width: 100%" data-bs-toggle="modal" data-bs-target="#addDestModal" data-city-id="${target_city_id}" data-city-name="${target_city_name}">Create Plan</button></div>
+					</div>  
+					`
+				} else {
+					btn_grp = `
 					<div class="container justify-content-center">
 						<div class='city-btn'><button class="btn btn-primary btn-sm city-detail-btn" style="margin: 4px 0px 2px 0px; width: 100%" data-bs-toggle="modal" data-bs-target="#cityDetailModal" data-city-id="${target_city_id}" data-city-name="${target_city_name}">Detail</button></div>
 						<div class='city-btn'><button class="btn btn-success btn-sm add-dest-btn" style="margin: 2px 0px 2px 0px; width: 100%" data-bs-toggle="modal" data-bs-target="#addDestModal" data-city-id="${target_city_id}" data-city-name="${target_city_name}">Create Plan</button></div>
@@ -239,17 +259,23 @@ rhit.MapPageController = class {
 						<div class='city-btn'><button class="btn btn-danger btn-sm end-route-btn" style="margin: 2px 0px 4px 0px; width: 100%;" data-bs-toggle="modal" data-bs-target="#addRouteModal" data-city-id="${target_city_id}" data-city-name="${target_city_name}">End Route</button></div>
 					</div>  
 					`
+				}
+
 			}
 
 
 			$(`#${target_po}`).append(btn_grp);
 
 			$('.city-detail-btn').on('click', (event) => {
-				this.fetchCityInfo(event.target.dataset.cityId);
+				this.prepareCityDetailModal(event.target.dataset.cityId);
+				rhit.planAndRouteManager.addPlanCityId = event.target.dataset.cityId;
+				rhit.planAndRouteManager.addPlanCityName = event.target.dataset.cityName;
 			})
 
 			$('.add-dest-btn').on('click', (event) => {
 				this.prepareAddDestModal(event.target.dataset.cityId, event.target.dataset.cityName);
+				rhit.planAndRouteManager.addPlanCityId = event.target.dataset.cityId;
+				rhit.planAndRouteManager.addPlanCityName = event.target.dataset.cityName;
 			})
 
 			$('.start-route-btn').on('click', (event) => {
@@ -261,12 +287,14 @@ rhit.MapPageController = class {
 				rhit.planAndRouteManager.routeState = 1;
 				rhit.planAndRouteManager.startCityId = event.target.dataset.cityId;
 				rhit.planAndRouteManager.startCityName = event.target.dataset.cityName;
+				this.updateDisplayRouteSelection();
 			})
 
 			$('.end-route-btn').on('click', (event) => {
 				rhit.planAndRouteManager.routeState = 0;
 				rhit.planAndRouteManager.endCityId = event.target.dataset.cityId;
 				rhit.planAndRouteManager.endCityName = event.target.dataset.cityName;
+				this.updateDisplayRouteSelection();
 				this.prepareAddRouteModal();
 			})
 
@@ -299,6 +327,12 @@ rhit.MapPageController = class {
 			$('#addRouteModal .form-group input,textarea').val('');
 		})
 
+		$('#buildPlanFromModalBtn').on('click', (event) => {
+			this.prepareAddDestModal(rhit.planAndRouteManager.addPlanCityId, rhit.planAndRouteManager.addPlanCityName);
+			$('#cityDetailModal').modal('hide');
+			$('#addDestModal').modal('show');
+		})
+
 		document.querySelector("#submitAddPlan").addEventListener("click", (event) => {
 			rhit.clearErrMsgInModal('addDestModal');
 			const startDate = $("#cityPlanStartDate").val();
@@ -306,8 +340,8 @@ rhit.MapPageController = class {
 			const endDate = $("#cityPlanEndDate").val();
 			const endDateSegs = endDate.split('/');
 			const cityInfo = {
-				'cityId': $('#addDestModal').attr('data-city-id'),
-				'cityName': $('#addDestModal').attr('data-city-name'),
+				'cityId': rhit.planAndRouteManager.addPlanCityId,
+				'cityName': rhit.planAndRouteManager.addPlanCityName,
 				'name': $('#cityPlanName').val(),
 				'budget': $('#cityPlanBudget').val(),
 				'description': $('#cityPlanDescription').val(),
@@ -317,11 +351,6 @@ rhit.MapPageController = class {
 				'endYear': endDateSegs[2]
 			}
 
-			// for(const key in cityInfo) {
-			// 	if (cityInfo[key] == '') {
-			// 		cityInfo[key] == ' ';
-			// 	}
-			// }
 			let issues = rhit.validateData(cityInfo)
 			if (issues.length == 0) {
 				rhit.planAndRouteManager.addCityPlan(cityInfo);
@@ -339,10 +368,10 @@ rhit.MapPageController = class {
 			const endDate = $("#routeEndDate").val();
 			const endDateSegs = endDate.split('/');
 			const routeInfo = {
-				'name' : $('#routeName').val(),
-				'startDate' : $('#routeStartDate').val(),
-				'budget' : $('#routeBudget').val(),
-				'description' : $('#routeDescription').val(),
+				'name': $('#routeName').val(),
+				'startDate': $('#routeStartDate').val(),
+				'budget': $('#routeBudget').val(),
+				'description': $('#routeDescription').val(),
 				'startDate': startDate == undefined ? undefined : startDateSegs[0] + '/' + startDateSegs[1],
 				'startYear': startDateSegs[2],
 				'endDate': endDate == undefined ? undefined : endDateSegs[0] + '/' + endDateSegs[1],
@@ -359,63 +388,74 @@ rhit.MapPageController = class {
 
 	}
 
-	updateAll = () => {
-		// this.updatePinColor();
-		// this.updateRouteDisplay();
+	updateAllViews = () => {
 		for (const line of this.routeLines) {
 			line.remove();
 		}
+		this.routeLines = [];
 		for (const item of rhit.planAndRouteManager.allPlansRouteslist) {
-			console.log(item.id);
 			const type = item.get(rhit.FB_KEY_ITEM_TYPE);
-			
+
 			if (type == 'plan') {
 				const cityId = item.get(rhit.FB_KEY_CITY_ID);
-				$(`.pinpoint[data-pin-city-id=${cityId}]`).attr("src", "imgs/redpin_9_14.jpg");	
+				$(`.pinpoint[data-pin-city-id=${cityId}]`).attr("src", "imgs/redpin_9_14.jpg");
 			} else { //item is a route
-				this.routeLines = [];
-				const startCityId = item.get(rhit.FB_KEY_START_CITY_ID);
-				const endCityId = item.get(rhit.FB_KEY_END_CITY_ID);
-				const startDate = item.get(rhit.FB_KEY_START_DATE);
-				const dateSegs = startDate.split('/');
-				const processed_startDate = dateSegs[0] + "/" + dateSegs[1];
-				const lineOptions = {
-					dash: { animation: true },
-					dropShadow: true,
-					size: 3,
-					color: '#800000',
-					middleLabel: LeaderLine.captionLabel({ text: `${processed_startDate}`, fontSize: '12px' }),
-				};
+				if (this.routeDisplay) {
+					const startCityId = item.get(rhit.FB_KEY_START_CITY_ID);
+					const endCityId = item.get(rhit.FB_KEY_END_CITY_ID);
+					const startDate = item.get(rhit.FB_KEY_START_DATE);
+					const dateSegs = startDate.split('/');
+					const processed_startDate = dateSegs[0] + "/" + dateSegs[1];
+					const lineOptions = {
+						dash: { animation: true },
+						dropShadow: true,
+						size: 3,
+						color: '#800000',
+						middleLabel: LeaderLine.captionLabel({ text: `${processed_startDate}`, fontSize: '12px' }),
+					};
 
-				this.routeLines.push(new LeaderLine(document.querySelector(`img[data-pin-city-id="${startCityId}"]`), document.querySelector(`img[data-pin-city-id="${endCityId}"]`), lineOptions));
+					this.routeLines.push(new LeaderLine(document.querySelector(`img[data-pin-city-id="${startCityId}"]`), document.querySelector(`img[data-pin-city-id="${endCityId}"]`), lineOptions));
 				}
+			}
+		}
+
+
+
+	}
+
+	updateDisplayRouteSelection() {
+		if (rhit.planAndRouteManager.routeState == 0) {
+			$('#navBarTitle').html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Where do you want to go?');
+			$('#clrRouteSelBtn').attr('style', 'display: none');
+		} else {
+			$('#navBarTitle').html(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Building a route starting at ${rhit.planAndRouteManager.startCityName}`);
+			$('#clrRouteSelBtn').attr('style', 'display: inline-block');
 		}
 	}
 
-	fetchCityInfo = (cityId) => {
-		//$('#cityDetailModal .modal-title').html(cityId);
-		rhit.cityManager.getCity(cityId).then(result => this.prepareCityDetailModal(result));
-	}
 
-	prepareCityDetailModal(cityInfo) {
-		$('#cityDetailModal .city-detail-title').html(cityInfo.name);
-		console.log(cityInfo.info);
-		const newInfo = cityInfo.info.replaceAll('\\n', '\n');
-		//console.log(newInfo);
-		$('#cityDetailModal .city-detail-intro').html(newInfo);
-		$('#cityDetailModal .city-detail-intro').attr('style', 'white-space: pre-line')
+	prepareCityDetailModal(cityId) {
+		rhit.cityManager.getCity(cityId).then(cityInfo => {
+			$('#cityDetailModal .city-detail-title').html(cityInfo.name);
+		
+			const newInfo = cityInfo.info.replaceAll('\\n', '\n');
+			//console.log(newInfo);
+			$('#cityDetailModal .city-detail-intro').html(newInfo);
+			$('#cityDetailModal .city-detail-intro').attr('style', 'white-space: pre-line')
 
-		for (const imgLink of cityInfo.imgSrc) {
-			const carouselItem = `
-			<div class="carousel-item">
-				<img src="${imgLink}" class="d-block w-100" alt="${cityInfo.name} picture">
-		  	</div>
-			`
-			$('#cityDetailModal .city-detail-carousel .carousel-inner').append(carouselItem);
-		}
+			for (const imgLink of cityInfo.imgSrc) {
+				const carouselItem = `
+				<div class="carousel-item">
+					<img src="${imgLink}" class="d-block w-100" alt="${cityInfo.name} picture">
+				</div>
+				`
+				$('#cityDetailModal .city-detail-carousel .carousel-inner').append(carouselItem);
+			}
 
-		$('#cityDetailModal .city-detail-carousel .carousel-item').first().addClass('active');
+			$('#cityDetailModal .city-detail-carousel .carousel-item').first().addClass('active');
 
+			});
+		
 	}
 
 	prepareAddRouteModal(cityId, cityName) {
@@ -428,12 +468,6 @@ rhit.MapPageController = class {
 		$('#addDestModal').attr('data-city-name', cityName);
 	}
 
-
-
-	// updateListener = () => {
-	// 	this.updatePinColor();
-	// 	this.updateRouteDisplay();
-	// }
 
 
 }
@@ -544,6 +578,8 @@ rhit.PlanAndRouteManager = class {
 		this.startCityName = null;
 		this.endCityId = null;
 		this.endCityName = null;
+		this.addPlanCityId = null;
+		this.addPlanCityName = null;
 		this._uid = uid;
 		this.allPlansRoutesCol = firebase.firestore().collection(rhit.FB_COLLECTION_PLAN_AND_ROUTE);
 		this._unsubcribe = null;
@@ -563,11 +599,11 @@ rhit.PlanAndRouteManager = class {
 				this.allPlansRouteslist = docSnapshot.docs;	//does this add a new document/plan to the list of cities that have a plan?
 				updateListener();
 			})
-		
+
 	}
 
-	stopListening() {             
-	 	this._unsubscribe();		
+	stopListening() {
+		this._unsubscribe();
 	}
 
 	addCityPlan(cityInfo) {
@@ -730,7 +766,7 @@ rhit.ListPageController = class {
 				const startDate = plan.startDate;
 				const startParts = startDate.split('/');
 				const startMonth = parseInt(startParts[0], 10);
-				switch (startMonth){
+				switch (startMonth) {
 					case 1:
 						newJan.appendChild(newCard);
 						document.querySelector(".jan").innerHTML = "January";
@@ -781,7 +817,7 @@ rhit.ListPageController = class {
 					case 12:
 						newDec.appendChild(newCard);
 						document.querySelector(".dec").innerHTML = "December";
-						break;	
+						break;
 				}
 			});
 		}
@@ -945,6 +981,7 @@ rhit.FbAuthManager = class { //scaffolding always changes
 
 rhit.checkForRedirects = function () {
 	if (document.querySelector("#loginPage") && rhit.fbAuthManager.isSignedIn) {
+		console.log('redirecting to map');
 		window.location.href = "/map.html";
 	}
 
@@ -953,7 +990,7 @@ rhit.checkForRedirects = function () {
 	}
 }
 
-rhit.initializeClasses = function() {
+rhit.initializeClasses = function () {
 	rhit.cityManager = new rhit.CityManager();
 	rhit.planAndRouteManager = new rhit.PlanAndRouteManager(rhit.fbAuthManager.uid);
 	if (document.querySelector('#mainPage')) {
@@ -971,15 +1008,15 @@ rhit.main = function () {
 	rhit.fbAuthManager = new rhit.FbAuthManager();
 	let uid = null;
 	rhit.fbAuthManager.beginListening(() => {
-		console.log('auth state change');
-		console.log("isSignedIn = ", rhit.fbAuthManager.isSignedIn);
-		if (rhit.fbAuthManager.isSignedIn && !rhit.uid) {
-			rhit.initializeClasses();
-		}
+		console.log("Auth state changed. isSignedIn = ", rhit.fbAuthManager.isSignedIn);
 		rhit.checkForRedirects();
-		if (document.querySelector("#loginPage")) {
-			console.log("You are on the login page.");
-			new rhit.LoginPageController();
+		if (rhit.fbAuthManager.isSignedIn) {
+			rhit.initializeClasses();
+		} else {
+			if (document.querySelector("#loginPage")) {
+				console.log("You are on the login page.");
+				new rhit.LoginPageController();
+			}
 		}
 	});
 
@@ -1005,11 +1042,6 @@ rhit.main = function () {
 		});
 
 	})
-
-
-
-
-
 };
 
 rhit.main();
