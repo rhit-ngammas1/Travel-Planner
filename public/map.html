@@ -68,21 +68,21 @@
           </button>
         </div>
         <div class="modal-body">
-          <div class="form-group bmd-form-group">
+          <div class="form-group bmd-form-group name-field">
             <label for="cityPlanName" class="bmd-label-floating">Name</label>
-            <input type="text" class="form-control" id="cityPlanName">
+            <input type="text" class="form-control name-input" id="cityPlanName">
           </div>
-          <div class="form-group bmd-form-group">
+          <div class="form-group bmd-form-group start-date-field">
             <label for="cityPlanStartDate" class="bmd-label-floating">Start Date</label>
-              <input type="text" class="form-control" id="cityPlanStartDate">
+              <input type="text" class="form-control start-date-input" id="cityPlanStartDate">
           </div>
-          <div class="form-group bmd-form-group">
+          <div class="form-group bmd-form-group end-date-field">
             <label for="cityPlanEndDate" class="bmd-label-floating">End Date</label>
-              <input type="text" class="form-control" id="cityPlanEndDate">
+              <input type="text" class="form-control end-date-input" id="cityPlanEndDate">
           </div>
-          <div class="form-group bmd-form-group">
+          <div class="form-group bmd-form-group budget-field">
             <label for="cityPlanBudget" class="bmd-label-floating">Budget</label>
-            <input type="number" min="0" class="form-control" id="cityPlanBudget" step="100">
+            <input type="number" min="0" class="form-control budget-input" id="cityPlanBudget" step="100">
           </div>
           <div class="form-group bmd-form-group">
             <label for="cityPlanDescription" class="bmd-label-floating">Description</label>
@@ -92,7 +92,7 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="submitAddPlan">Add City
+          <button type="button" class="btn btn-primary" id="submitAddPlan">Add City
             Plan</button>
         </div>
       </div>
@@ -109,21 +109,21 @@
           </button>
         </div>
         <div class="modal-body">
-          <div class="form-group bmd-form-group">
+          <div class="form-group bmd-form-group name-field">
             <label for="routeName" class="bmd-label-floating">Name</label>
-            <input type="text" class="form-control" id="routeName">
+            <input type="text" class="form-control name-input" id="routeName">
           </div>
-          <div class="form-group bmd-form-group">
+          <div class="form-group bmd-form-group start-date-field">
             <label for="routeStartDate" class="bmd-label-floating">Start Date</label>
-            <input type="text" class="form-control" id="routeStartDate">
+            <input type="text" class="form-control start-date-input" id="routeStartDate">
           </div>
-          <div class="form-group bmd-form-group">
+          <div class="form-group bmd-form-group end-date-field">
             <label for="routeEndDate" class="bmd-label-floating">End Date</label>
-            <input type="text" class="form-control" id="routeEndDate">
+            <input type="text" class="form-control end-date-input" id="routeEndDate">
           </div>
-          <div class="form-group bmd-form-group">
+          <div class="form-group bmd-form-group budget-field">
             <label for="routeBudget" class="bmd-label-floating">Budget</label>
-            <input type="number" onkeyup="if(this.value<0)this.value=1" onblur="if(this.value<0)this.value=1" class="form-control" id="routeBudget" step="100">
+            <input type="number" onkeyup="if(this.value<0)this.value=1" onblur="if(this.value<0)this.value=1" class="form-control budget-input" id="routeBudget" min="0" step="100">
           </div>
           <div class="form-group bmd-form-group">
             <label for="routeDescription" class="bmd-label-floating">Description</label>
@@ -133,7 +133,7 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="submitAddRoute">Add Route</button>
+          <button type="button" class="btn btn-primary" id="submitAddRoute">Add Route</button>
         </div>
       </div>
     </div>

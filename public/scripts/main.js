@@ -7,7 +7,7 @@ const db = firebase.firestore();
 /** globals */
 rhit.variableName = "";
 rhit.FB_COL_CITY = 'cities';
-rhit.FB_COLLECTION_PLAN = 'plans';
+rhit.FB_COLLECTION_PLAN_AND_ROUTE = 'plansAndRoutes';
 rhit.FB_COLLECTION_ROUTE = 'routes';
 rhit.FB_KEY_CITY_ID = 'cityId';
 rhit.FB_KEY_CITY_NAME = 'cityName';
@@ -18,19 +18,23 @@ rhit.FB_KEY_END_CITY_NAME = 'endCityName';
 rhit.FB_KEY_NAME = 'name';
 rhit.FB_KEY_START_DATE = 'startDate';
 rhit.FB_KEY_END_DATE = 'endDate';
+rhit.FB_KEY_START_YEAR = 'startYear';
+rhit.FB_KEY_END_YEAR = 'endYear';
 rhit.FB_KEY_BUDGET = 'budget';
 rhit.FB_KEY_DESCRIPTION = 'description';
 rhit.FB_KEY_LAST_TOUCHED = "lastTouched";
 rhit.FB_KEY_AUTHOR = "author";
+rhit.FB_KEY_ITEM_TYPE = 'type';
 
 rhit.storage.PLAN_ID_KEY = "planId";
 
 rhit.pageController = null;
 rhit.fbAuthManager = null;
 rhit.cityManager = null;
-rhit.planManager = null;
 rhit.planDetailsManager = null;
-rhit.routeManager = null;
+rhit.planAndRouteManager = null;
+rhit.listPageController = null;
+rhit.uid = null;
 
 rhit.storage.getPlanId = function () {
 	const planId = sessionStorage.getItem(rhit.storage.PLAN_ID_KEY);
@@ -51,73 +55,138 @@ function htmlToElement(html) {
 	return template.content.firstChild;
 }
 
-rhit.validateData = function (name, startDate, endDate, budget) {
-	let validated = true;
-	if (name.replace(/\s+/g, '').length == 0) {
-		validated = false;
-	}
-	//make sure end date is after start date
-	if (endDate != "") {
-		validated = rhit.validateDate(startDate, endDate);
-	}
-	//disallow budget=0, or auto set to 0 if not set?
-	if (budget < 0) {
-		validated = false;
-	}
-	return validated;
+rhit.clearErrMsgInModal = (modalId) => {
+	$(`#${modalId} .err-msg`).remove();
+	$(`#${modalId} input`).attr('style', '');
 }
 
-rhit.validateDate = function (startDate, endDate) {
-	//Check for right pattern: mm/dd/yyyy
-	// if(!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(date)) {
-	// 	return false
-	// }
-
-	//Split up parts
-	const startParts = startDate.split("/");
-	const startMonth = parseInt(startParts[0], 10);
-	const startDay = parseInt(startParts[1], 10);
-	const startYear = parseInt(startParts[2], 10);
-
-	const endParts = endDate.split("/");
-	const endMonth = parseInt(endParts[0], 10);
-	const endDay = parseInt(endParts[1], 10);
-	const endYear = parseInt(endParts[2], 10);
-
-	//Check that endDate is greater than startDate
-
-	if (endDay <= startDay) {
-		if (endMonth <= startMonth) {
-			if (endYear <= startYear) {
-				console.log("Bad date");
-				return false;
-			}
+rhit.showErrMsgInModal = (modalId, issues) => {
+	let errMsg = '';
+	for (const err of issues) {
+		if (err == 'startDate empty') {
+			errMsg = `
+			<div class="err-msg" style="color: red">
+				start date cannot be empty
+			</div>
+			`
+			$(`#${modalId} .start-date-field`).append(errMsg);
+			$(`#${modalId} .start-date-input`).attr('style', 'border: 1px solid red');
+		} else if (err == 'endDate empty') {
+			errMsg = `
+			<div class="err-msg" style="color: red">
+				end date cannot be empty
+			</div>
+			`
+			$(`#${modalId} .end-date-field`).append(errMsg);
+			$(`#${modalId} .end-date-input`).attr('style', 'border: 1px solid red');
+		} else if (err == 'endDate before startDate') {
+			errMsg = `
+			<div class="err-msg" style="color: red">
+				end date must be after start date
+			</div>
+			`
+			$(`#${modalId} .end-date-field`).append(errMsg);
+			$(`#${modalId} .end-date-input`).attr('style', 'border: 1px solid red');
+			$(`#${modalId} .start-date-input`).attr('style', 'border: 1px solid red');
+		} else {
+			errMsg = `
+			<div class="err-msg" style="color: red">
+				${err} cannot be empty
+			</div>
+			`
+			$(`#${modalId} .${err}-field`).append(errMsg);
+			$(`#${modalId} .${err}-input`).attr('style', 'border: 1px solid red');
 		}
 	}
 
-	// //Check that year and month are correct
-	// if(year < 1000 || year > 3000 || month == 0 || month > 12) {
-	//     return false;
-	// }
-
-	// //Check that day are correct
-	// const monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-	// if(day <= 0 || day > monthLength[month - 1]){
-	// 	return false;
-	// }
-	console.log("Good date");
-	return true;
 }
+
+rhit.validateData = (data) => {
+	let issues = [];
+	let dateKeys = ['startDate', 'endDate', 'startYear', 'endYear'];
+
+	if (data['endYear'] == undefined) {
+		issues.push('endDate empty');
+	} 
+
+	if (data['startYear'] == undefined) {
+		issues.push('startDate empty');
+	}
+	
+	if (data['endYear'] != undefined && data['startYear'] != undefined) {
+		if (data['endYear'] < data['startYear']) {
+			issues.push('endDate before startDate');
+		} else if (data['endYear'] == data['startYear']){
+			if (data['endDate'] < data['startDate']) {
+				issues.push('endDate before startDate');
+			}
+		}
+	}
+	
+	
+
+	for (let key in data) {
+		if (dateKeys.includes(key)) continue; //skip date values, since they have been verified
+		if (data[key] == undefined && key != 'description') {
+			issues.push(key);
+		} else if (data[key].trim().length == 0 && key != 'description') {
+			issues.push(key);
+		}
+	}
+
+
+	return issues;
+
+}
+
+// rhit.validateDate = function (startDate, endDate) {
+// 	//Check for right pattern: mm/dd/yyyy
+// 	// if(!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(date)) {
+// 	// 	return false
+// 	// }
+
+// 	//Split up parts
+// 	const startParts = startDate.split("/");
+// 	const startMonth = parseInt(startParts[0], 10);
+// 	const startDay = parseInt(startParts[1], 10);
+// 	const startYear = parseInt(startParts[2], 10);
+
+// 	const endParts = endDate.split("/");
+// 	const endMonth = parseInt(endParts[0], 10);
+// 	const endDay = parseInt(endParts[1], 10);
+// 	const endYear = parseInt(endParts[2], 10);
+
+// 	//Check that endDate is greater than startDate
+
+// 	if (endDay <= startDay) {
+// 		if (endMonth <= startMonth) {
+// 			if (endYear <= startYear) {
+// 				console.log("Bad date");
+// 				return false;
+// 			}
+// 		}
+// 	}
+
+// 	// //Check that year and month are correct
+// 	// if(year < 1000 || year > 3000 || month == 0 || month > 12) {
+// 	//     return false;
+// 	// }
+
+// 	// //Check that day are correct
+// 	// const monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+// 	// if(day <= 0 || day > monthLength[month - 1]){
+// 	// 	return false;
+// 	// }
+// 	console.log("Good date");
+// 	return true;
+// }
 
 
 //main page controller
 rhit.MapPageController = class {
 
 	constructor() {
-		this.planManager = rhit.planManager;
-		this.routeManager = rhit.routeManager;
-		this.planManager.beginListening(this.updatePinColor.bind(this));
-		this.routeManager.beginListening(this.updateRouteDisplay.bind(this));
+		rhit.planAndRouteManager.beginListening(this.updateAll.bind(this));
 		this.initializePopover();
 		this.initializeModal();
 		this.routeLines = [];
@@ -144,7 +213,7 @@ rhit.MapPageController = class {
 			const target_city_id = event.target.dataset.pinCityId;
 			const target_city_name = event.target.dataset.pinCityName;
 			let btn_grp = null;
-			if (this.routeManager.routeState == 0) {
+			if (rhit.planAndRouteManager.routeState == 0) {
 				btn_grp = `
 					<div class="container justify-content-center">
 						<div class='city-btn'><button class="btn btn-primary btn-sm city-detail-btn" style="margin: 4px 0px 2px 0px; width: 100%" data-bs-toggle="modal" data-bs-target="#cityDetailModal" data-city-id="${target_city_id}" data-city-name="${target_city_name}">Detail</button></div>
@@ -153,7 +222,15 @@ rhit.MapPageController = class {
 						<div class='city-btn'><button class="btn btn-danger btn-sm end-route-btn" style="margin: 2px 0px 4px 0px; width: 100%; display: none;" data-bs-toggle="modal" data-bs-target="#addRouteModal" data-city-id="${target_city_id}" data-city-name="${target_city_name}">End Route</button></div>
 					</div>  
 					`
-			} else if (this.routeManager.routeState == 1) {
+			} else if (rhit.planAndRouteManager.routeState == 1) {
+				// if (target_city_id == rhit.planAndRouteManager.startCityId) {
+				// 	btn_grp = `
+				// 	<div class="container justify-content-center">
+				// 		<div class='city-btn'><button class="btn btn-primary btn-sm city-detail-btn" style="margin: 4px 0px 2px 0px; width: 100%" data-bs-toggle="modal" data-bs-target="#cityDetailModal" data-city-id="${target_city_id}" data-city-name="${target_city_name}">Detail</button></div>
+				// 		<div class='city-btn'><button class="btn btn-success btn-sm add-dest-btn" style="margin: 2px 0px 2px 0px; width: 100%" data-bs-toggle="modal" data-bs-target="#addDestModal" data-city-id="${target_city_id}" data-city-name="${target_city_name}">Create Plan</button></div>
+				// 	</div>  
+				// 	`
+				// }
 				btn_grp = `
 					<div class="container justify-content-center">
 						<div class='city-btn'><button class="btn btn-primary btn-sm city-detail-btn" style="margin: 4px 0px 2px 0px; width: 100%" data-bs-toggle="modal" data-bs-target="#cityDetailModal" data-city-id="${target_city_id}" data-city-name="${target_city_name}">Detail</button></div>
@@ -177,20 +254,19 @@ rhit.MapPageController = class {
 
 			$('.start-route-btn').on('click', (event) => {
 
-				if (this.routeManager.routeState == 0)
+				if (rhit.planAndRouteManager.routeState == 0) {
 					$('.start-route-btn, .end-route-btn').toggle();
-				this.routeManager.routeState = 1;
-				this.routeManager.startCityId = event.target.dataset.cityId;
-				this.routeManager.startCityName = event.target.dataset.cityName;
+					$(`.end-route-btn[data-city-id=${event.target.dataset.cityId}]`).toggle();
+				}
+				rhit.planAndRouteManager.routeState = 1;
+				rhit.planAndRouteManager.startCityId = event.target.dataset.cityId;
+				rhit.planAndRouteManager.startCityName = event.target.dataset.cityName;
 			})
 
 			$('.end-route-btn').on('click', (event) => {
-
-				if (this.routeManager.routeState == 1)
-					$('.start-route-btn, .end-route-btn').toggle();
-				this.routeManager.routeState = 0;
-				this.routeManager.endCityId = event.target.dataset.cityId;
-				this.routeManager.endCityName = event.target.dataset.cityName;
+				rhit.planAndRouteManager.routeState = 0;
+				rhit.planAndRouteManager.endCityId = event.target.dataset.cityId;
+				rhit.planAndRouteManager.endCityName = event.target.dataset.cityName;
 				this.prepareAddRouteModal();
 			})
 
@@ -201,6 +277,10 @@ rhit.MapPageController = class {
 	initializeModal = () => {
 		$('.modal').on('show.bs.modal', (event) => {
 			$('[data-toggle="popover"]').popover('hide');
+		})
+
+		$('.modal').on('hidden.bs.modal', (event) => {
+			rhit.clearErrMsgInModal(event.target.id);
 		})
 
 		$('#cityDetailModal').on('hidden.bs.modal', (event) => {
@@ -220,63 +300,95 @@ rhit.MapPageController = class {
 		})
 
 		document.querySelector("#submitAddPlan").addEventListener("click", (event) => {
-			const cityId = $('#addDestModal').attr('data-city-id');
-			const cityName = $('#addDestModal').attr('data-city-name');
-			const name = document.querySelector("#cityPlanName").value;
-			const startDate = document.querySelector("#cityPlanStartDate").value;
-			const endDate = document.querySelector("#cityPlanEndDate").value;
-			const budget = document.querySelector("#cityPlanBudget").value;
-			const description = document.querySelector("#cityPlanDescription").value;
-			if (rhit.validateData(name, startDate, endDate, budget)) {
-				rhit.planManager.add(cityId, cityName, name, startDate, endDate, budget, description);
+			rhit.clearErrMsgInModal('addDestModal');
+			const startDate = $("#cityPlanStartDate").val();
+			const startDateSegs = startDate.split('/');
+			const endDate = $("#cityPlanEndDate").val();
+			const endDateSegs = endDate.split('/');
+			const cityInfo = {
+				'cityId': $('#addDestModal').attr('data-city-id'),
+				'cityName': $('#addDestModal').attr('data-city-name'),
+				'name': $('#cityPlanName').val(),
+				'budget': $('#cityPlanBudget').val(),
+				'description': $('#cityPlanDescription').val(),
+				'startDate': startDate == undefined ? undefined : startDateSegs[0] + '/' + startDateSegs[1],
+				'startYear': startDateSegs[2],
+				'endDate': endDate == undefined ? undefined : endDateSegs[0] + '/' + endDateSegs[1],
+				'endYear': endDateSegs[2]
+			}
+
+			// for(const key in cityInfo) {
+			// 	if (cityInfo[key] == '') {
+			// 		cityInfo[key] == ' ';
+			// 	}
+			// }
+			let issues = rhit.validateData(cityInfo)
+			if (issues.length == 0) {
+				rhit.planAndRouteManager.addCityPlan(cityInfo);
+				$('#addDestModal').modal('hide');
+			} else {
+				rhit.showErrMsgInModal('addDestModal', issues);
 			}
 			// window.location.href = "/plan.html"
 		});
 
 		$('#submitAddRoute').on('click', (event) => {
-			const name = $('#routeName').val();
-			const startDate = $('#routeStartDate').val();
-			const endDate = $('#routeEndDate').val();
-			const budget = $('#routeBudger').val();
-			const description = $('#routeDescription').val();
-			if (rhit.validateData(name, startDate, endDate, budget)) {
-				rhit.routeManager.add(name, startDate, endDate, budget, description);
+			rhit.clearErrMsgInModal('addRouteModal');
+			const startDate = $("#routeStartDate").val();
+			const startDateSegs = startDate.split('/');
+			const endDate = $("#routeEndDate").val();
+			const endDateSegs = endDate.split('/');
+			const routeInfo = {
+				'name' : $('#routeName').val(),
+				'startDate' : $('#routeStartDate').val(),
+				'budget' : $('#routeBudget').val(),
+				'description' : $('#routeDescription').val(),
+				'startDate': startDate == undefined ? undefined : startDateSegs[0] + '/' + startDateSegs[1],
+				'startYear': startDateSegs[2],
+				'endDate': endDate == undefined ? undefined : endDateSegs[0] + '/' + endDateSegs[1],
+				'endYear': endDateSegs[2]
+			}
+			let issues = rhit.validateData(routeInfo)
+			if (issues.length == 0) {
+				rhit.planAndRouteManager.addRoute(routeInfo);
+				$('#addRouteModal').modal('hide');
+			} else {
+				rhit.showErrMsgInModal('addRouteModal', issues);
 			}
 		})
 
 	}
 
-	updatePinColor = () => {
-		for (const city of this.planManager.cityList) {
-			const cityId = city.get(rhit.FB_KEY_CITY_ID);
-			$(`.pinpoint[data-pin-city-id=${cityId}]`).attr("src", "imgs/redpin_9_14.jpg");
-		}
-	}
-
-	updateRouteDisplay = () => {
+	updateAll = () => {
+		// this.updatePinColor();
+		// this.updateRouteDisplay();
 		for (const line of this.routeLines) {
 			line.remove();
 		}
-		this.routeLines = [];
-		for (const route of this.routeManager.routeList) {
-			const startCityId = route.get(rhit.FB_KEY_START_CITY_ID);
-			const endCityId = route.get(rhit.FB_KEY_END_CITY_ID);
-			const startDate = route.get(rhit.FB_KEY_START_DATE);
-			const dateSegs = startDate.split('/');
-			const processed_startDate = dateSegs[1] + "/" + dateSegs[2];
-			console.log(startDate);
-			const lineOptions = {
-				dash: { animation: true },
-				dropShadow: true,
-				size: 3,
-				color: '#800000',
-				middleLabel: LeaderLine.captionLabel({ text: `${processed_startDate}`, fontSize: '12px' }),
+		for (const item of rhit.planAndRouteManager.allPlansRouteslist) {
+			console.log(item.id);
+			const type = item.get(rhit.FB_KEY_ITEM_TYPE);
+			
+			if (type == 'plan') {
+				const cityId = item.get(rhit.FB_KEY_CITY_ID);
+				$(`.pinpoint[data-pin-city-id=${cityId}]`).attr("src", "imgs/redpin_9_14.jpg");	
+			} else { //item is a route
+				this.routeLines = [];
+				const startCityId = item.get(rhit.FB_KEY_START_CITY_ID);
+				const endCityId = item.get(rhit.FB_KEY_END_CITY_ID);
+				const startDate = item.get(rhit.FB_KEY_START_DATE);
+				const dateSegs = startDate.split('/');
+				const processed_startDate = dateSegs[0] + "/" + dateSegs[1];
+				const lineOptions = {
+					dash: { animation: true },
+					dropShadow: true,
+					size: 3,
+					color: '#800000',
+					middleLabel: LeaderLine.captionLabel({ text: `${processed_startDate}`, fontSize: '12px' }),
+				};
 
-			};
-
-			this.routeLines.push(new LeaderLine(document.querySelector(`img[data-pin-city-id="${startCityId}"]`), document.querySelector(`img[data-pin-city-id="${endCityId}"]`), lineOptions));
-
-
+				this.routeLines.push(new LeaderLine(document.querySelector(`img[data-pin-city-id="${startCityId}"]`), document.querySelector(`img[data-pin-city-id="${endCityId}"]`), lineOptions));
+				}
 		}
 	}
 
@@ -307,10 +419,10 @@ rhit.MapPageController = class {
 	}
 
 	prepareAddRouteModal(cityId, cityName) {
-		$('#addRouteModal .add-route-title').html(`Adding a route plan from ${this.routeManager.startCityName} to ${this.routeManager.endCityName}`);
+		$('#addRouteModal .add-route-title').html(`Adding a route plan from ${rhit.planAndRouteManager.startCityName} to ${rhit.planAndRouteManager.endCityName}`);
 	}
 
-	prepareAddDestModal = (cityId, cityName) => {
+	prepareAddDestModal(cityId, cityName) {
 		$('#addDestModal .add-dest-title').html('Adding a travel plan to ' + cityName);
 		$('#addDestModal').attr('data-city-id', cityId);
 		$('#addDestModal').attr('data-city-name', cityName);
@@ -425,50 +537,57 @@ rhit.PlanDetailsManager = class {
 	}
 }
 
-rhit.PlanManager = class {
+rhit.PlanAndRouteManager = class {
 	constructor(uid) {
+		this.routeState = 0;
+		this.startCityId = null;
+		this.startCityName = null;
+		this.endCityId = null;
+		this.endCityName = null;
 		this._uid = uid;
-		this.planCollection = firebase.firestore().collection(rhit.FB_COLLECTION_PLAN);
+		this.allPlansRoutesCol = firebase.firestore().collection(rhit.FB_COLLECTION_PLAN_AND_ROUTE);
 		this._unsubcribe = null;
-		this.cityList = [];
+		this.allPlansRouteslist = [];
 	}
 
 	beginListening(updateListener) {
-		if (this._uid) { // run if not null
-			query = query.where(rhit.FB_KEY_AUTHOR, "==", this._uid);
-		}
-		this._unsubcribe = this.planCollection
-			.limit(50)
+		// if (this._uid) { // run if not null
+		// 	query = query.where(rhit.FB_KEY_AUTHOR, "==", this._uid);
+		// }
+		this._unsubcribe = this.allPlansRoutesCol
+			.where(rhit.FB_KEY_AUTHOR, '==', rhit.fbAuthManager.uid)
+			.orderBy('startYear', 'asc')
+			.orderBy('startDate', 'asc')
+			.limit(100)
 			.onSnapshot((docSnapshot) => {
-				this.cityList = docSnapshot.docs;	//does this add a new document/plan to the list of cities that have a plan?
-				console.log("DocSnapshot.docs: ", docSnapshot.docs);
-
-				docSnapshot.forEach((doc) => {  //for each doc in the collection, print data
-					console.log(doc.data());
-				});
-
+				this.allPlansRouteslist = docSnapshot.docs;	//does this add a new document/plan to the list of cities that have a plan?
 				updateListener();
 			})
+		
 	}
-	// stopListening() {             needed?
-	// 	this._unsubscribe();		
-	// }
 
-	add(cityId, cityName, name, startDate, endDate, budget, description) {
-		this.planCollection.add({
-			[rhit.FB_KEY_CITY_ID]: cityId,
-			[rhit.FB_KEY_CITY_NAME]: cityName,
-			[rhit.FB_KEY_NAME]: name,
-			[rhit.FB_KEY_START_DATE]: startDate,
-			[rhit.FB_KEY_END_DATE]: endDate,
-			[rhit.FB_KEY_BUDGET]: budget,
-			[rhit.FB_KEY_DESCRIPTION]: description,
+	stopListening() {             
+	 	this._unsubscribe();		
+	}
+
+	addCityPlan(cityInfo) {
+		this.allPlansRoutesCol.add({
+			[rhit.FB_KEY_CITY_ID]: cityInfo.cityId,
+			[rhit.FB_KEY_CITY_NAME]: cityInfo.cityName,
+			[rhit.FB_KEY_NAME]: cityInfo.name,
+			[rhit.FB_KEY_START_DATE]: cityInfo.startDate,
+			[rhit.FB_KEY_END_DATE]: cityInfo.endDate,
+			[rhit.FB_KEY_START_YEAR]: cityInfo.startYear,
+			[rhit.FB_KEY_END_YEAR]: cityInfo.endYear,
+			[rhit.FB_KEY_BUDGET]: cityInfo.budget,
+			[rhit.FB_KEY_DESCRIPTION]: cityInfo.description,
 			[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
-			[rhit.FB_KEY_LAST_TOUCHED]: firebase.firestore.Timestamp.now()
+			[rhit.FB_KEY_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
+			[rhit.FB_KEY_ITEM_TYPE]: 'plan'
 		})
 			.then((docRef) => {
 				console.log("Plan written with ID: ", docRef.id);
-				window.location.href = "/plan.html"
+				//window.location.href = "/plan.html"
 
 			})
 			.catch((error) => {
@@ -476,8 +595,33 @@ rhit.PlanManager = class {
 			});
 	}
 
+	addRoute(routeInfo) {
+		this.allPlansRoutesCol.add({
+			[rhit.FB_KEY_START_CITY_ID]: rhit.planAndRouteManager.startCityId,
+			[rhit.FB_KEY_START_CITY_NAME]: rhit.planAndRouteManager.startCityName,
+			[rhit.FB_KEY_END_CITY_ID]: rhit.planAndRouteManager.endCityId,
+			[rhit.FB_KEY_END_CITY_NAME]: rhit.planAndRouteManager.endCityName,
+			[rhit.FB_KEY_NAME]: routeInfo.name,
+			[rhit.FB_KEY_START_DATE]: routeInfo.startDate,
+			[rhit.FB_KEY_END_DATE]: routeInfo.endDate,
+			[rhit.FB_KEY_START_YEAR]: routeInfo.startYear,
+			[rhit.FB_KEY_END_YEAR]: routeInfo.endYear,
+			[rhit.FB_KEY_BUDGET]: routeInfo.budget,
+			[rhit.FB_KEY_DESCRIPTION]: routeInfo.description,
+			[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
+			[rhit.FB_KEY_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
+			[rhit.FB_KEY_ITEM_TYPE]: 'route'
+		})
+			.then((docRef) => {
+				console.log("route written with ID: ", docRef.id);
+			})
+			.catch((error) => {
+				console.error("Error adding route: ", error);
+			});
+	}
+
 	getPlanAtIndex(index) {
-		const docSnapshot = this.cityList[index];
+		const docSnapshot = this.allPlansRouteslist[index];
 		const plan = new rhit.Plan(docSnapshot.id,
 			docSnapshot.get(rhit.FB_KEY_CITY_ID),
 			docSnapshot.get(rhit.FB_KEY_CITY_NAME),
@@ -491,109 +635,19 @@ rhit.PlanManager = class {
 		);
 		return plan;
 	}
+
 	delete() {
 		const id = rhit.storage.getPlanId();
-		return this.planCollection.doc(id).delete();
+		return this.allPlansRoutesCol.doc(id).delete();
 	}
+
 	get length() {
-		return this.cityList.length;
+		return this.allPlansRouteslist.length;
 	}
 
 
 
 }
-
-rhit.RouteManager = class {
-	constructor(uid) {
-		this.routeState = 0;
-		this.startCityId = null;
-		this.startCityName = null;
-		this.endCityId = null;
-		this.endCityName = null;
-		this._uid = uid;
-		this.routeCollection = firebase.firestore().collection(rhit.FB_COLLECTION_ROUTE);
-		this._unsubcribe = null;
-		this.routeList = [];
-	}
-
-	beginListening(updateListener) {
-		if (this._uid) { // run if not null
-			query = query.where(rhit.FB_KEY_AUTHOR, "==", this._uid);
-		}
-		this._unsubcribe = this.routeCollection
-			.limit(50)
-			.onSnapshot((docSnapshot) => {
-				this.routeList = docSnapshot.docs;
-				console.log(docSnapshot.docs);
-				updateListener();
-			})
-	}
-
-	add(name, startDate, endDate, budget, description) {
-		if (budget == undefined)
-			budget = "0";
-		this.routeCollection.add({
-			[rhit.FB_KEY_START_CITY_ID]: this.startCityId,
-			[rhit.FB_KEY_START_CITY_NAME]: this.startCityName,
-			[rhit.FB_KEY_END_CITY_ID]: this.endCityId,
-			[rhit.FB_KEY_END_CITY_NAME]: this.endCityName,
-			[rhit.FB_KEY_NAME]: name,
-			[rhit.FB_KEY_START_DATE]: startDate,
-			[rhit.FB_KEY_END_DATE]: endDate,
-			[rhit.FB_KEY_BUDGET]: budget,
-			[rhit.FB_KEY_DESCRIPTION]: description,
-			[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
-			[rhit.FB_KEY_LAST_TOUCHED]: firebase.firestore.Timestamp.now()
-		})
-			.then((docRef) => {
-				console.log("route written with ID: ", docRef.id);
-			})
-			.catch((error) => {
-				console.error("Error adding route: ", error);
-			});
-	}
-
-	// set routeState(state) {
-	// 	this.routeState = state;
-	// }
-
-	// set routeStartCityId(id) {
-	// 	this.routeStartCityId = id;
-	// }
-
-	// set routeStartCityName(name) {
-	// 	this.routeStartCityName = name;
-	// }
-
-	// set routeEndCityId(id) {
-	// 	this.routeEndCityId = id;
-	// }
-
-	// set routeEndCityName(name) {
-	// 	this.routeEndCityName = name;
-	// }
-
-	// get routeState() {
-	// 	return this.routeState;
-	// }
-
-	// get routeStartCityId() {
-	// 	return this.routeStartCityId;
-	// }
-
-	// get routeStartCityName() {
-	// 	return this.routeStartCityName;
-	// }
-
-	// get routeEndCityId() {
-	// 	return this.routeEndCityId;
-	// }
-
-	// get routeEndCityName() {
-	// 	return this.routeEndCityName;
-	// }
-}
-
 
 rhit.city = class {
 	constructor(id, name, imgSrc, info) {
@@ -624,7 +678,7 @@ rhit.ListPageController = class {
 				rhit.planDetailsManager.edit(name, startDate, endDate, budget, description);
 			}
 		});
-		rhit.planManager.beginListening(this.updateList.bind(this));
+		rhit.planAndRouteManager.beginListening(this.updateList.bind(this));
 
 		document.querySelector("#myMapButt").addEventListener("click", (event) => {
 			window.location.href = "/map.html"
@@ -637,7 +691,7 @@ rhit.ListPageController = class {
 		});
 		document.querySelector("#submitDeletePlan").addEventListener("click", (event) => {
 			console.log("Clicked submit deletion");
-			rhit.planManager.delete();
+			rhit.planAndRouteManager.delete();
 			this.updateList();
 		});
 
@@ -664,8 +718,8 @@ rhit.ListPageController = class {
 		const newOct = htmlToElement('<div id="octList"></div');
 		const newNov = htmlToElement('<div id="novList"></div');
 		const newDec = htmlToElement('<div id="decList"></div');
-		for (let i = 0; i < rhit.planManager.length; i++) {
-			const plan = rhit.planManager.getPlanAtIndex(i);
+		for (let i = 0; i < rhit.planAndRouteManager.length; i++) {
+			const plan = rhit.planAndRouteManager.getPlanAtIndex(i);
 			rhit.cityManager.getCity(plan.cityId).then(cityData => {		//get city data, and then use img file path in that data to create a card
 				const newCard = this._createCard(plan, cityData);
 				newCard.onclick = (event) => {
@@ -876,6 +930,7 @@ rhit.FbAuthManager = class { //scaffolding always changes
 
 	}
 	signOut() {
+		console.log('attemping sign out');
 		firebase.auth().signOut().catch((error) => {
 			console.log("Sign out error");
 		});
@@ -887,9 +942,10 @@ rhit.FbAuthManager = class { //scaffolding always changes
 		return this._user.uid;
 	}
 }
+
 rhit.checkForRedirects = function () {
 	if (document.querySelector("#loginPage") && rhit.fbAuthManager.isSignedIn) {
-		window.location.href = "/map.html"
+		window.location.href = "/map.html";
 	}
 
 	if (!document.querySelector("#loginPage") && !rhit.fbAuthManager.isSignedIn) {
@@ -897,16 +953,29 @@ rhit.checkForRedirects = function () {
 	}
 }
 
-
+rhit.initializeClasses = function() {
+	rhit.cityManager = new rhit.CityManager();
+	rhit.planAndRouteManager = new rhit.PlanAndRouteManager(rhit.fbAuthManager.uid);
+	if (document.querySelector('#mainPage')) {
+		rhit.pageController = new rhit.MapPageController();
+	} else {
+		rhit.listPageController = new rhit.ListPageController();
+	}
+}
 /* Main */
 /** function and class syntax examples */
 rhit.main = function () {
 	console.log("Ready");
-	const urlParams = new URLSearchParams(window.location.search);
-	rhit.fbAuthManager = new rhit.FbAuthManager();
+	//const urlParams = new URLSearchParams(window.location.search);
 
+	rhit.fbAuthManager = new rhit.FbAuthManager();
+	let uid = null;
 	rhit.fbAuthManager.beginListening(() => {
+		console.log('auth state change');
 		console.log("isSignedIn = ", rhit.fbAuthManager.isSignedIn);
+		if (rhit.fbAuthManager.isSignedIn && !rhit.uid) {
+			rhit.initializeClasses();
+		}
 		rhit.checkForRedirects();
 		if (document.querySelector("#loginPage")) {
 			console.log("You are on the login page.");
@@ -914,51 +983,31 @@ rhit.main = function () {
 		}
 	});
 
+	//if (document.querySelector('#mainPage') || document.querySelector())
 
-	if (document.querySelector("#planPage")) {
-		console.log("You are on the Plans and Routes page.");
-
-		const uid = urlParams.get("uid"); //search for keyword "uid" in the url
-		rhit.cityManager = new rhit.CityManager();
-		rhit.planManager = new rhit.PlanManager(uid);
-		rhit.routeManager = new rhit.RouteManager(uid);
-		rhit.pageController = new rhit.ListPageController();
-	}
-	if (document.querySelector("#mainPage")) {
-		console.log("You are on the map page.");
-
-		const uid = urlParams.get("uid"); //search for keyword "uid" in the url
-		rhit.cityManager = new rhit.CityManager();
-		rhit.planManager = new rhit.PlanManager(uid);
-		rhit.routeManager = new rhit.RouteManager(uid);
-		rhit.pageController = new rhit.MapPageController();
-	}
+	// window.addEventListener('popstate', (event) => {
+	// 	rhit.initializeClasses();
+	// })
 
 	$(document).ready(() => {
 		$('[data-toggle="popover"]').popover();
 		$('#cityPlanStartDate').datepicker().on('show', () => {
-			$('.datepicker').css('transform', 'translateY(90px)');
+			$('.datepicker').css('transform', 'translateY(80px)');
 		});
 		$('#cityPlanEndDate').datepicker().on('show', () => {
-			$('.datepicker').css('transform', 'translateY(90px)');
+			$('.datepicker').css('transform', 'translateY(80px)');
 		});
 		$('#routeStartDate').datepicker().on('show', () => {
-			$('.datepicker').css('transform', 'translateY(90px)');
+			$('.datepicker').css('transform', 'translateY(80px)');
 		});
 		$('#routeEndDate').datepicker().on('show', () => {
-			$('.datepicker').css('transform', 'translateY(90px)');
+			$('.datepicker').css('transform', 'translateY(80px)');
 		});
 
 	})
 
 
 
-
-	// $(function() {
-	// 	$('#cityPlanStartDate').datepicker();
-	// 	$('#cityPlanEndDate').datepicker();
-	// 	$('.datepicker').css('transform', 'translateY(100px)');
-	// });
 
 
 };

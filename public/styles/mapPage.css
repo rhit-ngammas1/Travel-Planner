@@ -81,3 +81,7 @@ body {
 .nav-link{
     cursor: pointer;
 }
+
+.modal label {
+    margin-top: 10px;
+}
