@@ -197,7 +197,6 @@ rhit.MapPageController = class {
 		// 	const startCity = document.querySelector("#cityPlanName").value;
 		// });
 
-		//PUT INTO OWN NAV CONTROLLER??
 		document.querySelector("#myMapButt").addEventListener("click", (event) => {
 			window.location.href = "/map.html"
 		});
@@ -359,7 +358,6 @@ rhit.MapPageController = class {
 			} else {
 				rhit.showErrMsgInModal('addDestModal', issues);
 			}
-			// window.location.href = "/plan.html"
 		});
 
 		$('#submitAddRoute').on('click', (event) => {
@@ -643,7 +641,7 @@ rhit.PlanAndRouteManager = class {
 		})
 			.then((docRef) => {
 				console.log("Plan written with ID: ", docRef.id);
-				//window.location.href = "/plan.html"
+				window.location.href = "/plan.html"
 
 			})
 			.catch((error) => {
@@ -746,12 +744,36 @@ rhit.ListPageController = class {
 			const description = document.querySelector("#descripInput").value;
 
 			const tripId = rhit.storage.getTripId();
-			if (rhit.validateData(name, startDate, endDate, budget)) {
-				console.log("Trip id " + tripId)
-				rhit.planDetailsManager = new rhit.PlanDetailsManager(tripId);						//duplciate or merge for RRRRRRRRRoutes
+			// if (rhit.validateData(name, startDate, endDate, budget)) {
+			// 	rhit.planDetailsManager = new rhit.PlanDetailsManager(tripId);						
+			// 	rhit.planDetailsManager.edit(name, startDate, endDate, budget, description);
+			// }
+
+			rhit.clearErrMsgInModal('planDetails');
+			const startDateSegs = startDate.split('/');
+			const endDateSegs = endDate.split('/');
+			const tripInfo = {
+				'name': "Placeholder",
+				'budget': $('#budgetInput').val(),
+				'description': $('#descripInput').val(),
+				'startDate': startDate == undefined ? undefined : startDateSegs[0] + '/' + startDateSegs[1],
+				'startYear': startDateSegs[2],
+				'endDate': endDate == undefined ? undefined : endDateSegs[0] + '/' + endDateSegs[1],
+				'endYear': endDateSegs[2]
+			}
+
+			let issues = rhit.validateData(tripInfo)
+			if (issues.length == 0) {
+				console.log("modal should dissapear");
+				rhit.planDetailsManager = new rhit.PlanDetailsManager(tripId);						
 				rhit.planDetailsManager.edit(name, startDate, endDate, budget, description);
+				$('#planDetails').modal('hide');
+			} else {
+				console.log("modal has issues:" + issues.length);
+				rhit.showErrMsgInModal('planDetails', issues);
 			}
 		});
+
 		rhit.planAndRouteManager.beginListening(this.updateList.bind(this));
 
 		document.querySelector("#myMapButt").addEventListener("click", (event) => {
@@ -767,13 +789,7 @@ rhit.ListPageController = class {
 			console.log("Clicked submit deletion");
 			rhit.planAndRouteManager.delete();
 			this.updateList();
-		});
-
-		// $('#deletePlanOrRoute').on('click', function(){
-		// 	console.log('click the delete pin button')
-		// 	return false
-		// })		
-
+		});	
 	}
 
 	//Update Viewer
@@ -791,6 +807,7 @@ rhit.ListPageController = class {
 		const newNov = htmlToElement('<div id="novList"></div');
 		const newDec = htmlToElement('<div id="decList"></div');
 		for (let i = 0; i < rhit.planAndRouteManager.length; i++) {
+			
 			const trip = rhit.planAndRouteManager.getTripAtIndex(i); 		
 			let tripCityId = "";
 			if(trip.type == "Plan"){
@@ -800,10 +817,14 @@ rhit.ListPageController = class {
 			}
 			rhit.cityManager.getCity(tripCityId).then(cityData => {		//get city data, and then use img file path in that data to create a card
 				const newCard = this._createCard(trip, cityData);
+
 				newCard.onclick = (event) => {
-					console.log("Clicked on card with id: ", trip.id);
 					rhit.storage.setTripId(trip.id);
 					this.updateModalDetails(trip);
+				};
+				newCard.firstElementChild.firstElementChild.onclick = (event) => {
+					$("#planDetails").modal('show');
+					console.log("Clicked on card with id: ", trip.id);
 				};
 				const startDate = trip.startDate;
 				const startParts = startDate.split('/');
@@ -850,9 +871,6 @@ rhit.ListPageController = class {
 						document.querySelector(".oct").innerHTML = "October";
 						break;
 					case 11:
-						console.log("IN NOV");
-						console.log("Plan: ", trip);
-						console.log("Plan date:", trip.startDate);
 						newNov.appendChild(newCard);
 						document.querySelector(".nov").innerHTML = "November";
 						break;
@@ -924,6 +942,15 @@ rhit.ListPageController = class {
 		oldDec.hidden = true;
 		oldDec.parentElement.appendChild(newDec);
 	}
+
+	// initializeModal() {
+	// 	console.log("Card clicked");
+	// 	document.querySelector("#cardBounds").addEventListener("click", (event) => {
+	// 		$("#planDetails").modal('show');
+	// 		// data-toggle="modal" data-target="#planDetails"
+	// 	});
+	// }
+
 	updateModalDetails(trip) {
 		document.querySelector("#detailModalTitle").innerHTML = trip.name;
 		document.querySelector("#startDateInput").value = trip.startDate;
@@ -933,7 +960,7 @@ rhit.ListPageController = class {
 		if(trip.type == "Plan"){
 			document.querySelector("#detailModalSubtitle").innerHTML = `${trip.cityName} Plan`;
 		} else {
-			document.querySelector("#detailModalSubtitle").innerHTML = `${trip.startCityName} Route`;
+			document.querySelector("#detailModalSubtitle").innerHTML = `${trip.startCityName} to ${trip.endCityName} Route`;
 		}
 	}
 
@@ -949,7 +976,7 @@ rhit.ListPageController = class {
 		return htmlToElement(`
 			<div>
 				<div class="pin">
-					<div data-toggle="modal" data-target="#planDetails">
+					<div class=bounds>
 						<div>
 							<img src=${cityData.imgSrc[0]} class='iconDetails'>
 						</div>
@@ -973,6 +1000,11 @@ rhit.ListPageController = class {
 				<hr>
 			</div>
 		`)
+	}
+
+	_createDeleteButt(){
+		return htmlToElement(
+		)
 	}
 
 };
@@ -1094,7 +1126,15 @@ rhit.main = function () {
 			$('.datepicker').css('transform', 'translateY(80px)');
 		});
 
+		$('#startDateInput').datepicker().on('show', () => {
+			$('.datepicker').css('transform', 'translateY(80px)');
+		});
+		$('#endDateInput').datepicker().on('show', () => {
+			$('.datepicker').css('transform', 'translateY(80px)');
+		});
+
 	})
+
 };
 
 rhit.main();

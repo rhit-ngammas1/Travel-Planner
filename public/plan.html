@@ -104,8 +104,7 @@
     </main>
 
     <!-- Modal -->
-    <div class="modal fade" id="planDetails" tabindex="-1" role="dialog" aria-labelledby="Plan details"
-        aria-hidden="true">
+    <div class="modal fade" id="planDetails" tabindex="-1" role="dialog" aria-labelledby="Trip details" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
 
@@ -115,33 +114,27 @@
 
                 <div id="modalBody" class="modal-body">
                     <h5 id="detailModalSubtitle" class="modal-subheader">Seattle Plan</h5>
+                    <div class="form-group bmd-form-group start-date-field">
+                        <label for="startDateInput" class="bmd-label-floating calendar">Start Date</label>
+                        <input type="text" class="form-control start-date-input" id="startDateInput">
+                    </div>
+                    <div class="form-group bmd-form-group end-date-field">
+                        <label for="endDateInput" class="bmd-label-floating">End Date</label>
+                        <input type="text" class="form-control end-date-input" id="endDateInput">
+                    </div>
+                    <div class="form-group bmd-form-group budget-field">
+                        <label for="budgetInput" class="bmd-label-static">Budget</label>
+                        <input type="number" min="0" class="form-control budget-input" id="budgetInput" step="100">
+                    </div>
                     <div class="form-group bmd-form-group">
                         <label for="descripInput" class="bmd-label-static">Description</label>
                         <input type="text" class="form-control" id="descripInput">
                     </div>
-                    <div class="form-group bmd-form-group">
-                        <label for="startDateInput" class="bmd-label-static">Start Date</label>
-                        <input type="text" class="form-control" id="startDateInput">
-                    </div>
-                    <div class="form-group bmd-form-group">
-                        <label for="endDateInput" class="bmd-label-static">End Date</label>
-                        <input type="text" class="form-control" id="endDateInput">
-                    </div>
-                    <div class="form-group bmd-form-group">
-                        <label for="budgetInput" class="bmd-label-static">Budget</label>
-                        <input type="number" class="form-control" id="budgetInput" step="100">
-                    </div>
-                    <div class="form-group bmd-form-group">
-                        <label for="visitInput" class="bmd-label-static">To Visit</label>
-                        <input type="text" class="form-control" id="visitInput">
-                    </div>
                 </div>
 
                 <div class="modal-footer">
-                    <button id="planCancelButt" type="button" class="btn btn-secondary"
-                        data-dismiss="modal">CANCEL</button>
-                    <!--create button, data-dismiss makes the modal go away after clicking-->
-                    <button id="planDoneButt" type="button" class="btn btn-primary" data-dismiss="modal">DONE</button>
+                    <button id="planCancelButt" type="button" class="btn btn-secondary" data-bs-dismiss="modal">CANCEL</button>
+                    <button id="planDoneButt" type="button" class="btn btn-primary">DONE</button>
 
                 </div>
             </div>
@@ -156,7 +149,7 @@
           <h5 class="modal-title">Delete this plan</h5>
         </div>
         <div class="modal-body">
-        Are you sure you want to delete this plan?
+        Are you sure you want to delete this trip?
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">CANCEL</button>

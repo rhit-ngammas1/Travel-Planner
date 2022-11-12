@@ -39,6 +39,9 @@ body {
 #modalBody{
     padding-top: 2px;
 }
+.form-group{
+    padding-bottom: 15px;
+}
 
 
 .pin img {
