@@ -26,7 +26,7 @@ rhit.FB_KEY_LAST_TOUCHED = "lastTouched";
 rhit.FB_KEY_AUTHOR = "author";
 rhit.FB_KEY_ITEM_TYPE = 'type';
 
-rhit.storage.PLAN_ID_KEY = "planId";
+rhit.storage.TRIP_ID_KEY = "tripId";
 
 rhit.pageController = null;
 rhit.fbAuthManager = null;
@@ -36,15 +36,16 @@ rhit.planAndRouteManager = null;
 rhit.listPageController = null;
 rhit.uid = null;
 
-rhit.storage.getPlanId = function () {
-	const planId = sessionStorage.getItem(rhit.storage.PLAN_ID_KEY);
-	if (!planId) {
-		console.log("No plan id");
+rhit.storage.getTripId = function () {
+	const tripId = sessionStorage.getItem(rhit.storage.TRIP_ID_KEY);
+	if (!tripId) {
+		console.log("No trip id");
 	}
-	return planId;
+	return tripId;
 };
-rhit.storage.setPlanId = function (planId) {
-	sessionStorage.setItem(rhit.storage.PLAN_ID_KEY, planId);
+rhit.storage.setTripId = function (tripId) {
+	console.log("Set Id: " + tripId);
+	sessionStorage.setItem(rhit.storage.TRIP_ID_KEY, tripId);
 };
 
 
@@ -509,14 +510,33 @@ rhit.Plan = class {
 		this.description = description;
 		this.author = author;
 		this.timestamp = timestamp;
-	}
+	}	
+}
+rhit.Route = class {
+	constructor(id, startCityId, startCityName, endCityId, endCityName, name, startDate, endDate, budget, description, author, timestamp) {
+		this.type = "Route";
+		this.id = id;
+
+		this.startCityId = startCityId;
+		this.startCityName = startCityName;
+		this.endCityId = endCityId;
+		this.endCityName = endCityName;
+
+		this.name = name;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.budget = budget;
+		this.description = description;
+		this.author = author;
+		this.timestamp = timestamp;
+	}	
 }
 
 rhit.PlanDetailsManager = class {
 	constructor(planId) {
 		this._documentSnapshot = {};
 		this._unsubscribe = null;
-		this._planDoc = firebase.firestore().collection(rhit.FB_COLLECTION_PLAN).doc(planId);
+		this._planDoc = firebase.firestore().collection(rhit.FB_COLLECTION_PLAN_AND_ROUTE).doc(planId);
 		this.planId = planId;
 	}
 
@@ -538,7 +558,7 @@ rhit.PlanDetailsManager = class {
 	edit(name, startDate, endDate, budget, description) {
 		console.log(`Document being edited: ${this._planDoc}`)
 		this._planDoc.update({
-			[rhit.FB_KEY_NAME]: name,
+			// [rhit.FB_KEY_NAME]: name,							//have to decide whether or not names will be editable
 			[rhit.FB_KEY_START_DATE]: startDate,
 			[rhit.FB_KEY_END_DATE]: endDate,
 			[rhit.FB_KEY_BUDGET]: budget,
@@ -656,24 +676,42 @@ rhit.PlanAndRouteManager = class {
 			});
 	}
 
-	getPlanAtIndex(index) {
+	getTripAtIndex(index) {
 		const docSnapshot = this.allPlansRouteslist[index];
-		const plan = new rhit.Plan(docSnapshot.id,
-			docSnapshot.get(rhit.FB_KEY_CITY_ID),
-			docSnapshot.get(rhit.FB_KEY_CITY_NAME),
-			docSnapshot.get(rhit.FB_KEY_NAME),
-			docSnapshot.get(rhit.FB_KEY_START_DATE),
-			docSnapshot.get(rhit.FB_KEY_END_DATE),
-			docSnapshot.get(rhit.FB_KEY_BUDGET),
-			docSnapshot.get(rhit.FB_KEY_DESCRIPTION),
-			docSnapshot.get(rhit.FB_KEY_AUTHOR),
-			docSnapshot.get(rhit.FB_KEY_LAST_TOUCHED)
-		);
-		return plan;
+		let trip = "";
+
+		if( docSnapshot.get(rhit.FB_KEY_ITEM_TYPE) == "plan" ){
+			trip = new rhit.Plan(docSnapshot.id,
+				docSnapshot.get(rhit.FB_KEY_CITY_ID),
+				docSnapshot.get(rhit.FB_KEY_CITY_NAME),
+				docSnapshot.get(rhit.FB_KEY_NAME),
+				docSnapshot.get(rhit.FB_KEY_START_DATE),
+				docSnapshot.get(rhit.FB_KEY_END_DATE),
+				docSnapshot.get(rhit.FB_KEY_BUDGET),
+				docSnapshot.get(rhit.FB_KEY_DESCRIPTION),
+				docSnapshot.get(rhit.FB_KEY_AUTHOR),
+				docSnapshot.get(rhit.FB_KEY_LAST_TOUCHED)
+			);
+		} else {
+			trip = new rhit.Route(docSnapshot.id,
+				docSnapshot.get(rhit.FB_KEY_START_CITY_ID),
+				docSnapshot.get(rhit.FB_KEY_START_CITY_NAME),
+				docSnapshot.get(rhit.FB_KEY_END_CITY_ID),
+				docSnapshot.get(rhit.FB_KEY_END_CITY_NAME),
+				docSnapshot.get(rhit.FB_KEY_NAME),
+				docSnapshot.get(rhit.FB_KEY_START_DATE),
+				docSnapshot.get(rhit.FB_KEY_END_DATE),
+				docSnapshot.get(rhit.FB_KEY_BUDGET),
+				docSnapshot.get(rhit.FB_KEY_DESCRIPTION),
+				docSnapshot.get(rhit.FB_KEY_AUTHOR),
+				docSnapshot.get(rhit.FB_KEY_LAST_TOUCHED)
+			);
+		}
+		return trip;
 	}
 
 	delete() {
-		const id = rhit.storage.getPlanId();
+		const id = rhit.storage.getTripId();
 		return this.allPlansRoutesCol.doc(id).delete();
 	}
 
@@ -696,21 +734,21 @@ rhit.city = class {
 
 
 rhit.ListPageController = class {
-	//initialize modal as well?
 	constructor() {
 		let readyForDelete = 0;
 
 		document.querySelector("#planDoneButt").addEventListener("click", (event) => {
-			// const name = document.querySelector("#name").value;    use standin for name since its not editable as of now
-			const name = "placeHolderTitle";
+			// const name = document.querySelector("#name").value;    //use standin for Plan's name since its not editable as of now
+			const name = "placeHolderName";
 			const startDate = document.querySelector("#startDateInput").value;
 			const endDate = document.querySelector("#endDateInput").value;
 			const budget = document.querySelector("#budgetInput").value;
 			const description = document.querySelector("#descripInput").value;
 
-			const planId = rhit.storage.getPlanId();
+			const tripId = rhit.storage.getTripId();
 			if (rhit.validateData(name, startDate, endDate, budget)) {
-				rhit.planDetailsManager = new rhit.PlanDetailsManager(planId);
+				console.log("Trip id " + tripId)
+				rhit.planDetailsManager = new rhit.PlanDetailsManager(tripId);						//duplciate or merge for RRRRRRRRRoutes
 				rhit.planDetailsManager.edit(name, startDate, endDate, budget, description);
 			}
 		});
@@ -740,8 +778,6 @@ rhit.ListPageController = class {
 
 	//Update Viewer
 	updateList() {
-
-
 		const newJan = htmlToElement('<div id="janList"></div');		//make number a var, corresponding to each of the 12 months
 		const newFeb = htmlToElement('<div id="febList"></div');
 		const newMar = htmlToElement('<div id="marList"></div');
@@ -755,15 +791,21 @@ rhit.ListPageController = class {
 		const newNov = htmlToElement('<div id="novList"></div');
 		const newDec = htmlToElement('<div id="decList"></div');
 		for (let i = 0; i < rhit.planAndRouteManager.length; i++) {
-			const plan = rhit.planAndRouteManager.getPlanAtIndex(i);
-			rhit.cityManager.getCity(plan.cityId).then(cityData => {		//get city data, and then use img file path in that data to create a card
-				const newCard = this._createCard(plan, cityData);
+			const trip = rhit.planAndRouteManager.getTripAtIndex(i); 		
+			let tripCityId = "";
+			if(trip.type == "Plan"){
+				tripCityId = trip.cityId;
+			} else {
+				tripCityId = trip.startCityId;
+			}
+			rhit.cityManager.getCity(tripCityId).then(cityData => {		//get city data, and then use img file path in that data to create a card
+				const newCard = this._createCard(trip, cityData);
 				newCard.onclick = (event) => {
-					console.log("Clicked on card with id: ", plan.id);
-					rhit.storage.setPlanId(plan.id);
-					this.updateModalDetails(plan);
+					console.log("Clicked on card with id: ", trip.id);
+					rhit.storage.setTripId(trip.id);
+					this.updateModalDetails(trip);
 				};
-				const startDate = plan.startDate;
+				const startDate = trip.startDate;
 				const startParts = startDate.split('/');
 				const startMonth = parseInt(startParts[0], 10);
 				switch (startMonth) {
@@ -809,8 +851,8 @@ rhit.ListPageController = class {
 						break;
 					case 11:
 						console.log("IN NOV");
-						console.log("Plan: ", plan);
-						console.log("Plan date:", plan.startDate);
+						console.log("Plan: ", trip);
+						console.log("Plan date:", trip.startDate);
 						newNov.appendChild(newCard);
 						document.querySelector(".nov").innerHTML = "November";
 						break;
@@ -882,17 +924,28 @@ rhit.ListPageController = class {
 		oldDec.hidden = true;
 		oldDec.parentElement.appendChild(newDec);
 	}
-	updateModalDetails(plan) {
-		document.querySelector("#detailModalTitle").innerHTML = plan.name;
-		document.querySelector("#detailModalSubtitle").innerHTML = `${plan.cityName} Plan`;
-		document.querySelector("#startDateInput").value = plan.startDate;
-		document.querySelector("#endDateInput").value = plan.endDate;
-		document.querySelector("#budgetInput").value = plan.budget;
-		document.querySelector("#descripInput").value = plan.description;
+	updateModalDetails(trip) {
+		document.querySelector("#detailModalTitle").innerHTML = trip.name;
+		document.querySelector("#startDateInput").value = trip.startDate;
+		document.querySelector("#endDateInput").value = trip.endDate;
+		document.querySelector("#budgetInput").value = trip.budget;
+		document.querySelector("#descripInput").value = trip.description;
+		if(trip.type == "Plan"){
+			document.querySelector("#detailModalSubtitle").innerHTML = `${trip.cityName} Plan`;
+		} else {
+			document.querySelector("#detailModalSubtitle").innerHTML = `${trip.startCityName} Route`;
+		}
 	}
 
 	//Helper Functions
-	_createCard(plan, cityData) {
+	_createCard(trip, cityData) {
+		let cityName = "";
+		if(trip.type == "Plan"){
+			cityName = trip.cityName;
+		} else {
+			cityName = trip.startCityName;
+		}
+
 		return htmlToElement(`
 			<div>
 				<div class="pin">
@@ -901,16 +954,16 @@ rhit.ListPageController = class {
 							<img src=${cityData.imgSrc[0]} class='iconDetails'>
 						</div>
 						<div style='margin-left:120px;'>
-							<h4 class="title">${plan.name}</h4>
+							<h4 class="title">${trip.name}</h4>
 							<div></div>
-							<span class="travel-type" style="font-size:1em">${plan.type}</span>
-							<span class="travel-type-value" style="font-size:1em">for ${plan.cityName}</span>
+							<span class="travel-type" style="font-size:1em">${trip.type}</span>
+							<span class="travel-type-value" style="font-size:1em">for ${cityName}</span>
 							<div></div>
 							<span class="start-date" style="font-size:1em">Start Date- </span>
-							<span class="start-date-value" style="font-size:1em">${plan.startDate}</span>
+							<span class="start-date-value" style="font-size:1em">${trip.startDate}</span>
 							<div></div>
 							<span class="budget" style="font-size:1em">Budget- </span>
-							<span class="budget-value" style="font-size:1em">$${plan.budget}</span>
+							<span class="budget-value" style="font-size:1em">$${trip.budget}</span>
 						</div>
 					</div>
 					<button id="deletePlanOrRoute" type="button" class="btn bmd-btn-fab" data-toggle="modal" data-target="#deletePlanDialog">
