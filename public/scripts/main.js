@@ -737,7 +737,17 @@ rhit.ListPageController = class {
 				["99", "allTripsButt"],
 				["100", "NYButt"],
 				["101", "MiamiButt"],
-				["102", "LAButt"]
+				["102", "LAButt"],
+				["103", "ChicButt"],
+				["104", "HoustonButt"],
+				["105", "SeattleButt"],
+				["106", "BostonButt"],
+				["107", "DCButt"],
+				["108", "SFButt"],
+				["109", "PhillyButt"],
+				["110", "PhoenixButt"],
+				["111", "LVButt"],
+				["112", "SLCButt"]
 		]);
 
 		document.querySelector("#planDoneButt").addEventListener("click", (event) => {
@@ -1166,10 +1176,10 @@ rhit.main = function () {
 			// $('.datepicker').css('transform', 'translateY(80px)');
 		});
 
-		$('#startDateInput').datepicker("setDate", $(this).attr("startDateInput")).on('show', () => {
+		$('#startDateInput').datepicker("setDate", new Date()).on('show', () => {
 			// $('.datepicker').css('transform', 'translateY(200px)');
 		});
-		$('#endDateInput').datepicker("setDate", $(this).attr("endDateInput")).on('show', () => {
+		$('#endDateInput').datepicker("setDate", new Date()).on('show', () => {
 			// $('.datepicker').css('transform', 'translateY(40px)');
 		});
 
