@@ -80,7 +80,15 @@ rhit.showErrMsgInModal = (modalId, issues) => {
 			`
 			$(`#${modalId} .end-date-field`).append(errMsg);
 			$(`#${modalId} .end-date-input`).attr('style', 'border: 1px solid red');
-		} else if (err == 'endDate before startDate') {
+		} else if (err == 'budget must be positive') {
+			errMsg = `
+			<div class="err-msg" style="color: red">
+				budget must be positive
+			</div>
+			`
+			$(`#${modalId} .budget-field`).append(errMsg);
+			$(`#${modalId} .budget-input`).attr('style', 'border: 1px solid red');
+		}else if (err == 'endDate before startDate') {
 			errMsg = `
 			<div class="err-msg" style="color: red">
 				end date must be after start date
@@ -124,7 +132,9 @@ rhit.validateData = (data) => {
 		}
 	}
 
-
+	if (Number(data['budget']) < 0) {
+		issues.push('budget must be positive');
+	}
 
 	for (let key in data) {
 		if (dateKeys.includes(key)) continue; //skip date values, since they have been verified
@@ -485,6 +495,8 @@ rhit.Plan = class {
 		this.name = name;
 		this.startDate = startDate;
 		this.endDate = endDate;
+		this.startYear = startYear;
+		this.endYear = endYear;
 		this.budget = budget;
 		this.description = description;
 		this.author = author;
@@ -495,15 +507,15 @@ rhit.Route = class {
 	constructor(id, startCityId, startCityName, endCityId, endCityName, name, startDate, endDate, startYear, endYear, budget, description, author, timestamp) {
 		this.type = "Route";
 		this.id = id;
-
 		this.startCityId = startCityId;
 		this.startCityName = startCityName;
 		this.endCityId = endCityId;
 		this.endCityName = endCityName;
-
 		this.name = name;
 		this.startDate = startDate;
 		this.endDate = endDate;
+		this.startYear = startYear;
+		this.endYear = endYear;
 		this.budget = budget;
 		this.description = description;
 		this.author = author;
@@ -764,6 +776,7 @@ rhit.ListPageController = class {
 				rhit.planDetailsManager = new rhit.PlanDetailsManager(tripId);						
 				rhit.planDetailsManager.edit(name, startDate, endDate, startYear, endYear, budget, description);
 				$('#planDetails').modal('hide');
+				rhit.clearErrMsgInModal("planDetails");
 			} else {
 				rhit.showErrMsgInModal('planDetails', issues);
 			}
@@ -972,8 +985,8 @@ rhit.ListPageController = class {
 
 	updateModalDetails(trip) {
 		document.querySelector("#detailModalTitle").innerHTML = trip.name;
-		document.querySelector("#startDateInput").value = trip.startDate;
-		document.querySelector("#endDateInput").value = trip.endDate;
+		document.querySelector("#startDateInput").value = trip.startDate + '/' + trip.startYear;
+		document.querySelector("#endDateInput").value = trip.endDate + '/' + trip.endYear;
 		document.querySelector("#budgetInput").value = trip.budget;
 		document.querySelector("#descripInput").value = trip.description;
 		if(trip.type == "Plan"){
