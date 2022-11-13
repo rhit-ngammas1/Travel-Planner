@@ -15,39 +15,25 @@
 </head>
 
 <body>
-    <!--Drawer-->
-    <nav class="navbar navbar-dark fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
-            <a id="navBarTitle" class="navbar-brand" href="/map.html">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;My Plan and
-                Routes</a>
-            <button id="navBarOpenOutline" class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
-                <span id="navBarOpenButt" class="navbar-toggler-icon"></span>
-            </button>
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
-                aria-labelledby="offcanvasNavbarLabel">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">TRAVEL PLANNER</h5>
-                    <button id="navBarCloseButt" type="button" class="btn-close btn-close-white"
-                        data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                        <li class="nav-item">
-                            <a id="myMapButt" class="nav-link"> <i class="material-icons">travel_explore</i>My Map</a>
-                        </li>
-                        <li class="nav-item">
-                            <a id="myPlansButt" class="nav-link"> <i class="material-icons">location_city</i>My
-                                Trips</a>
-                        </li>
-                        <li class="nav-item">
-                            <a id="signOutMenuButt" class="nav-link"> <i class="material-icons">logout</i> Sign Out</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+          <a id="navTitle" class="navbar-brand" href="/map.html">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>My Plan and Routes</a>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav nav-tab">
+                <li class="nav-item">
+                    <a id="myMapButt" class="nav-link"> <i class="material-icons">travel_explore</i><span>My Map</span></a>
+                </li>
+                <li class="nav-item">
+                    <a id="myPlansButt" class="nav-link"> <i class="material-icons">location_city</i><span>My Trips</span></a>
+                </li>
+                <li class="nav-item">
+                    <a id="signOutMenuButt" class="nav-link"> <i class="material-icons">logout</i><span>Sign Out</span></a>
+                </li>
+            </ul>
+          </div>
         </div>
-    </nav>
+      </nav>
+
 
     <!--Pin/card Content-->
     <main class="bmd-layout-content">
@@ -66,7 +52,7 @@
             </div>
             <div id="aprContainer">
                 <div class="apr"></div>
-                <div id="aprilList"></div>
+                <div id="aprList"></div>
             </div>
             <div id="mayContainer">
                 <div class="may"></div>

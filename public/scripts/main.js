@@ -351,6 +351,19 @@ rhit.MapPageController = class {
 				'endYear': endDateSegs[2]
 			}
 
+			//Year included in startDate
+			// const cityInfo = {
+			// 	'cityId': rhit.planAndRouteManager.addPlanCityId,
+			// 	'cityName': rhit.planAndRouteManager.addPlanCityName,
+			// 	'name': $('#cityPlanName').val(),
+			// 	'budget': $('#cityPlanBudget').val(),
+			// 	'description': $('#cityPlanDescription').val(),
+			// 	'startDate': startDate,
+			// 	'startYear': startDateSegs[2],
+			// 	'endDate': endDate == undefined ? undefined : endDateSegs[0] + '/' + endDateSegs[1],
+			// 	'endYear': endDateSegs[2]
+			// }
+
 			let issues = rhit.validateData(cityInfo)
 			if (issues.length == 0) {
 				rhit.planAndRouteManager.addCityPlan(cityInfo);
@@ -376,6 +389,17 @@ rhit.MapPageController = class {
 				'endDate': endDate == undefined ? undefined : endDateSegs[0] + '/' + endDateSegs[1],
 				'endYear': endDateSegs[2]
 			}
+			//Year included in start date
+			// const routeInfo = {
+			// 	'name': $('#routeName').val(),
+			// 	'startDate': $('#routeStartDate').val(),
+			// 	'budget': $('#routeBudget').val(),
+			// 	'description': $('#routeDescription').val(),
+			// 	'startDate': startDate,
+			// 	'startYear': startDateSegs[2],
+			// 	'endDate': endDate,
+			// 	'endYear': endDateSegs[2]
+			// }
 			let issues = rhit.validateData(routeInfo)
 			if (issues.length == 0) {
 				rhit.planAndRouteManager.addRoute(routeInfo);
@@ -496,7 +520,7 @@ rhit.CityManager = class {
 }
 
 rhit.Plan = class {
-	constructor(id, cityId, cityName, name, startDate, endDate, budget, description, author, timestamp) {
+	constructor(id, cityId, cityName, name, startDate, endDate, startYear, endYear, budget, description, author, timestamp) {
 		this.type = "Plan";
 		this.id = id;
 		this.cityId = cityId;
@@ -511,7 +535,7 @@ rhit.Plan = class {
 	}	
 }
 rhit.Route = class {
-	constructor(id, startCityId, startCityName, endCityId, endCityName, name, startDate, endDate, budget, description, author, timestamp) {
+	constructor(id, startCityId, startCityName, endCityId, endCityName, name, startDate, endDate, startYear, endYear, budget, description, author, timestamp) {
 		this.type = "Route";
 		this.id = id;
 
@@ -553,12 +577,14 @@ rhit.PlanDetailsManager = class {
 	stopListening() {
 		this._unsubscribe();
 	}
-	edit(name, startDate, endDate, budget, description) {
+	edit(name, startDate, endDate, startYear, endYear, budget, description) {
 		console.log(`Document being edited: ${this._planDoc}`)
 		this._planDoc.update({
 			// [rhit.FB_KEY_NAME]: name,							//have to decide whether or not names will be editable
 			[rhit.FB_KEY_START_DATE]: startDate,
 			[rhit.FB_KEY_END_DATE]: endDate,
+			[rhit.FB_KEY_START_YEAR]: startYear,
+			[rhit.FB_KEY_END_YEAR]: endYear,
 			[rhit.FB_KEY_BUDGET]: budget,
 			[rhit.FB_KEY_DESCRIPTION]: description,
 			[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
@@ -685,6 +711,8 @@ rhit.PlanAndRouteManager = class {
 				docSnapshot.get(rhit.FB_KEY_NAME),
 				docSnapshot.get(rhit.FB_KEY_START_DATE),
 				docSnapshot.get(rhit.FB_KEY_END_DATE),
+				docSnapshot.get(rhit.FB_KEY_START_YEAR),
+				docSnapshot.get(rhit.FB_KEY_END_YEAR),
 				docSnapshot.get(rhit.FB_KEY_BUDGET),
 				docSnapshot.get(rhit.FB_KEY_DESCRIPTION),
 				docSnapshot.get(rhit.FB_KEY_AUTHOR),
@@ -699,6 +727,8 @@ rhit.PlanAndRouteManager = class {
 				docSnapshot.get(rhit.FB_KEY_NAME),
 				docSnapshot.get(rhit.FB_KEY_START_DATE),
 				docSnapshot.get(rhit.FB_KEY_END_DATE),
+				docSnapshot.get(rhit.FB_KEY_START_YEAR),
+				docSnapshot.get(rhit.FB_KEY_END_YEAR),
 				docSnapshot.get(rhit.FB_KEY_BUDGET),
 				docSnapshot.get(rhit.FB_KEY_DESCRIPTION),
 				docSnapshot.get(rhit.FB_KEY_AUTHOR),
@@ -752,21 +782,38 @@ rhit.ListPageController = class {
 			rhit.clearErrMsgInModal('planDetails');
 			const startDateSegs = startDate.split('/');
 			const endDateSegs = endDate.split('/');
+			let startDateNew = undefined ? undefined : startDateSegs[0] + '/' + startDateSegs[1];
+			console.log("Start Date New:" + startDateNew);
+			let startYear = startDateSegs[2];
+			let endDateNew = undefined ? undefined : endDateSegs[0] + '/' + endDateSegs[1];
+			let endYear = endDateSegs[2];
+
+			// const tripInfo = {
+			// 	'name': "Placeholder",
+			// 	'startDate': $('#routeStartDate').val(),
+			// 	'budget': $('#budgetInput').val(),
+			// 	'description': $('#descripInput').val(),
+			// 	'startDate': startDate == undefined ? undefined : startDateSegs[0] + '/' + startDateSegs[1],
+			// 	'startYear': startDateSegs[2],
+			// 	'endDate': endDate == undefined ? undefined : endDateSegs[0] + '/' + endDateSegs[1],
+			// 	'endYear': endDateSegs[2]
+			// }
 			const tripInfo = {
 				'name': "Placeholder",
+				'startDate': $('#routeStartDate').val(),
 				'budget': $('#budgetInput').val(),
 				'description': $('#descripInput').val(),
-				'startDate': startDate == undefined ? undefined : startDateSegs[0] + '/' + startDateSegs[1],
-				'startYear': startDateSegs[2],
-				'endDate': endDate == undefined ? undefined : endDateSegs[0] + '/' + endDateSegs[1],
-				'endYear': endDateSegs[2]
+				'startDate': startDateNew,
+				'startYear': startYear,
+				'endDate': endDateNew,
+				'endYear': endYear
 			}
 
 			let issues = rhit.validateData(tripInfo)
 			if (issues.length == 0) {
 				console.log("modal should dissapear");
 				rhit.planDetailsManager = new rhit.PlanDetailsManager(tripId);						
-				rhit.planDetailsManager.edit(name, startDate, endDate, budget, description);
+				rhit.planDetailsManager.edit(name, startDate, endDate, startYear, endYear, budget, description);
 				$('#planDetails').modal('hide');
 			} else {
 				console.log("modal has issues:" + issues.length);
@@ -897,10 +944,10 @@ rhit.ListPageController = class {
 		oldMar.hidden = true;
 		oldMar.parentElement.appendChild(newMar);
 
-		// const oldApr = document.querySelector("#aprList");
-		// oldApr.removeAttribute("id");
-		// oldApr.hidden = true;
-		// oldApr.parentElement.appendChild(newApr);
+		const oldApr = document.querySelector("#aprList");
+		oldApr.removeAttribute("id");
+		oldApr.hidden = true;
+		oldApr.parentElement.appendChild(newApr);
 
 		const oldMay = document.querySelector("#mayList");
 		oldMay.removeAttribute("id");
@@ -943,14 +990,6 @@ rhit.ListPageController = class {
 		oldDec.parentElement.appendChild(newDec);
 	}
 
-	// initializeModal() {
-	// 	console.log("Card clicked");
-	// 	document.querySelector("#cardBounds").addEventListener("click", (event) => {
-	// 		$("#planDetails").modal('show');
-	// 		// data-toggle="modal" data-target="#planDetails"
-	// 	});
-	// }
-
 	updateModalDetails(trip) {
 		document.querySelector("#detailModalTitle").innerHTML = trip.name;
 		document.querySelector("#startDateInput").value = trip.startDate;
@@ -972,6 +1011,7 @@ rhit.ListPageController = class {
 		} else {
 			cityName = trip.startCityName;
 		}
+		console.log("Trip.startdate: " + trip.startDate);
 
 		return htmlToElement(`
 			<div>
@@ -1126,11 +1166,11 @@ rhit.main = function () {
 			$('.datepicker').css('transform', 'translateY(80px)');
 		});
 
-		$('#startDateInput').datepicker().on('show', () => {
-			$('.datepicker').css('transform', 'translateY(80px)');
+		$('#startDateInput').datepicker("setDate", $(this).attr("startDateInput")).on('show', () => {
+			$('.datepicker').css('transform', 'translateY(60px)');
 		});
-		$('#endDateInput').datepicker().on('show', () => {
-			$('.datepicker').css('transform', 'translateY(80px)');
+		$('#endDateInput').datepicker("setDate", $(this).attr("endDateInput")).on('show', () => {
+			$('.datepicker').css('transform', 'translateY(40px)');
 		});
 
 	})

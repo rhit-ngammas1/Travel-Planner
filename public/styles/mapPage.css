@@ -9,7 +9,7 @@ body {
 }
 
 .page-container {
-    margin-top: 75px;
+    margin-top: 20px;
 }
 
 
@@ -54,33 +54,35 @@ body {
     height: 100vw;
 }
 
-/*New Drawer*/
-.bg-dark {
-    --bs-bg-opacity: 1;
-    background-color: rgba(#800000,var(--bs-bg-opacity))!important;
-}
-#navBarTitle, #navBarOpenOutline{
-    color:white;
-}
-.offcanvas-header, .offcanvas-body{
+/*New Nav Bar*/
+.navbar{
     background-color: #800000;
 }
-.offcanvas-header{
-    border-color: white;
+.nav-item{
+    margin-right: 1.25rem;
+    --bs-nav-link-hover-color: #6c757d;
 }
-.nav-item .nav-link, .material-icons{
+.nav-item > a {     
+    padding: 1rem 0.25rem;
     color: white;
 }
-
-.nav-item :first-child {     /*space inbetween icon and button for drawer*/
-    margin-right: 0.75rem;
+.nav-item > a > i {
+    margin-right: 0.5rem;       /*space inbetween icon and text for tab*/
+    vertical-align: middle;
 }
-
-
-
+.nav-item > a > span {
+    vertical-align: middle;
+}
+#navTitle{
+    font-weight:500;
+    font-size: 1.5em;
+    margin-right: 2.5rem;
+    color: white;
+}
 .nav-link{
     cursor: pointer;
 }
+
 
 .modal label {
     margin-top: 10px;
