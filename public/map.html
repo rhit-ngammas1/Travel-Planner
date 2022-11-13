@@ -19,18 +19,19 @@
   <!--Navbar-->
   <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container-fluid">
-      <a id="navTitle" class="navbar-brand" href="/map.html">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>Where do you want to go?</a>
+      <a id="navTitle" class="navbar-brand" href="/map.html">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>Where do you want
+          to go?</a>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
-            <li class="nav-item">
-                <a id="myMapButt" class="nav-link"> <i class="material-icons">travel_explore</i><span>My Map</span></a>
-            </li>
-            <li class="nav-item">
-                <a id="myPlansButt" class="nav-link"> <i class="material-icons">location_city</i><span>My Trips</span></a>
-            </li>
-            <li class="nav-item">
-                <a id="signOutMenuButt" class="nav-link"> <i class="material-icons">logout</i><span>Sign Out</span></a>
-            </li>
+          <li class="nav-item">
+            <a id="myMapButt" class="nav-link"> <i class="material-icons">travel_explore</i><span>My Map</span></a>
+          </li>
+          <li class="nav-item">
+            <a id="myPlansButt" class="nav-link"> <i class="material-icons">location_city</i><span>My Trips</span></a>
+          </li>
+          <li class="nav-item">
+            <a id="signOutMenuButt" class="nav-link"> <i class="material-icons">logout</i><span>Sign Out</span></a>
+          </li>
         </ul>
       </div>
     </div>
@@ -71,7 +72,8 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button id="buildPlanFromModalBtn" type="button" class="btn btn-primary" data-bs-dismiss="modal">Add a Plan</button>
+          <button id="buildPlanFromModalBtn" type="button" class="btn btn-primary" data-bs-dismiss="modal">Add a
+            Plan</button>
         </div>
       </div>
     </div>
@@ -93,11 +95,11 @@
           </div>
           <div class="form-group bmd-form-group start-date-field">
             <label for="cityPlanStartDate" class="bmd-label-floating">Start Date</label>
-              <input type="text" class="form-control start-date-input" id="cityPlanStartDate">
+            <input type="text" class="form-control start-date-input" id="cityPlanStartDate">
           </div>
           <div class="form-group bmd-form-group end-date-field">
             <label for="cityPlanEndDate" class="bmd-label-floating">End Date</label>
-              <input type="text" class="form-control end-date-input" id="cityPlanEndDate">
+            <input type="text" class="form-control end-date-input" id="cityPlanEndDate">
           </div>
           <div class="form-group bmd-form-group budget-field">
             <label for="cityPlanBudget" class="bmd-label-floating">Budget</label>
@@ -170,8 +172,36 @@
         <br>
         <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="los angeles pin" id="laPin" data-pin-city-id="102"
           data-pin-city-name="Los Angeles" data-toggle="popover" title="Los Angeles">
-
-
+        <br>
+        <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="chicago pin" id="chicagoPin" data-pin-city-id="103"
+          data-pin-city-name="Chicago" data-toggle="popover" title="Chicago">
+        <br>
+        <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="houston pin" id="houstonPin" data-pin-city-id="104"
+          data-pin-city-name="Houston" data-toggle="popover" title="Houston">
+        <br>
+        <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="seattle pin" id="seattlePin" data-pin-city-id="105"
+          data-pin-city-name="Seattle" data-toggle="popover" title="Seattle">
+        <br>
+        <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="boston pin" id="bostonPin" data-pin-city-id="106"
+          data-pin-city-name="Boston" data-toggle="popover" title="Boston">
+        <br>
+        <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="dc pin" id="dcPin" data-pin-city-id="107"
+          data-pin-city-name="Washington, D.C." data-toggle="popover" title="Washington, D.C.">
+        <br>
+        <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="san francisco pin" id="sfPin" data-pin-city-id="108"
+          data-pin-city-name="San Francisco" data-toggle="popover" title="San Francisco">
+        <br>
+        <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="philadelphia pin" id="phillyPin" data-pin-city-id="109"
+          data-pin-city-name="Philadelphia" data-toggle="popover" title="Philadelphia">
+        <br>
+        <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="phoenix pin" id="phoenixPin" data-pin-city-id="110"
+          data-pin-city-name="Phoenix" data-toggle="popover" title="Phoenix">
+          <br>
+          <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="las vegas pin" id="lasVegasPin" data-pin-city-id="111"
+            data-pin-city-name="Las Vegas" data-toggle="popover" title="Las Vegas">
+            <br>
+            <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="salt lake city pin" id="saltLakeCityPin" data-pin-city-id="112"
+              data-pin-city-name="Salt Lake City" data-toggle="popover" title="Salt Lake City">
       </div>
 
       <div class="row">
@@ -179,9 +209,11 @@
         <div id="btnWrapper" class="col">
           <button id="toggleRouteDisplay" class="btn btn-secondary map-page-func-btn">Toggle Route Display</button>
           <button id="closeAllPopover" class="btn btn-secondary map-page-func-btn">Close All Popovers</button>
-          <button id="clrRouteSelBtn" class="btn btn-secondary map-page-func-btn" style="display: none">Clear Start Point Selection</button>
+          <button id="clrRouteSelBtn" class="btn btn-secondary map-page-func-btn" style="display: none">Clear Start
+            Point Selection</button>
         </div>
-        <div id="cellPhoneDetectMsg">If you are on your mobile phone, please rotate your screen for best experience.</div>
+        <div id="cellPhoneDetectMsg">If you are on your mobile phone, please rotate your screen for best experience.
+        </div>
       </div>
 
     </div>
