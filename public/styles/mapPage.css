@@ -99,8 +99,8 @@ body {
 
 #lasVegasPin{
     position: relative;
-    left: 12%;
-    bottom: 68%;
+    left: 14.5%;
+    bottom: 62%;
 }
 
 #saltLakeCityPin{
@@ -109,10 +109,10 @@ body {
     bottom: 75%;
 }
 
-#mapContainer {
+/* #mapContainer {
     width: 80vw;
     height: 100vw;
-}
+} */
 
 /*New Nav Bar*/
 .navbar{
