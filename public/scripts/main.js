@@ -823,8 +823,7 @@ rhit.ListPageController = class {
 
 	//Update Viewer
 	updateList(code="99") {
-		let noCitiesToShow = 1;
-
+		console.log("updating list");
 		const newJan = htmlToElement('<div id="janList"></div');		//make number a var, corresponding to each of the 12 months
 		const newFeb = htmlToElement('<div id="febList"></div');
 		const newMar = htmlToElement('<div id="marList"></div');
@@ -863,7 +862,6 @@ rhit.ListPageController = class {
 			}
 
 			if(this.checkCityId(tripCityId, code)){
-				noCitiesToShow = 0;
 
 				rhit.cityManager.getCity(tripCityId).then(cityData => {		//get city data, and then use img file path in that data to create a card
 					const newCard = this._createCard(trip, cityData);
@@ -933,11 +931,6 @@ rhit.ListPageController = class {
 				});
 			}
 		}
-		if(noCitiesToShow){
-			console.log("No Cities");
-			const message = htmlToElement(`<h3>You have not created any routes or plans for this city :(</h3>`)
-			document.querySelector("#janList").parentElement.appendChild(message);
-		}
 
 		const oldJan = document.querySelector("#janList");
 		oldJan.removeAttribute("id");
@@ -1002,8 +995,8 @@ rhit.ListPageController = class {
 
 	updateModalDetails(trip) {
 		document.querySelector("#detailModalTitle").innerHTML = trip.name;
-		document.querySelector("#startDateInput").value = trip.startDate;
-		document.querySelector("#endDateInput").value = trip.endDate;
+		document.querySelector("#startDateInput").value = trip.startDate + '/' + trip.startYear;
+		document.querySelector("#endDateInput").value = trip.endDate + '/' + trip.endYear;
 		document.querySelector("#budgetInput").value = trip.budget;
 		document.querySelector("#descripInput").value = trip.description;
 		if(trip.type == "Plan"){
