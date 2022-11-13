@@ -127,6 +127,9 @@ body {
     margin-right: 2.5rem;
     color: white;
 }
+.dropdown-toggle::after{
+    vertical-align: middle;
+}
 
 
 

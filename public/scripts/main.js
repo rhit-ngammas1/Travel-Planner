@@ -140,49 +140,6 @@ rhit.validateData = (data) => {
 
 }
 
-// rhit.validateDate = function (startDate, endDate) {
-// 	//Check for right pattern: mm/dd/yyyy
-// 	// if(!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(date)) {
-// 	// 	return false
-// 	// }
-
-// 	//Split up parts
-// 	const startParts = startDate.split("/");
-// 	const startMonth = parseInt(startParts[0], 10);
-// 	const startDay = parseInt(startParts[1], 10);
-// 	const startYear = parseInt(startParts[2], 10);
-
-// 	const endParts = endDate.split("/");
-// 	const endMonth = parseInt(endParts[0], 10);
-// 	const endDay = parseInt(endParts[1], 10);
-// 	const endYear = parseInt(endParts[2], 10);
-
-// 	//Check that endDate is greater than startDate
-
-// 	if (endDay <= startDay) {
-// 		if (endMonth <= startMonth) {
-// 			if (endYear <= startYear) {
-// 				console.log("Bad date");
-// 				return false;
-// 			}
-// 		}
-// 	}
-
-// 	// //Check that year and month are correct
-// 	// if(year < 1000 || year > 3000 || month == 0 || month > 12) {
-// 	//     return false;
-// 	// }
-
-// 	// //Check that day are correct
-// 	// const monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-// 	// if(day <= 0 || day > monthLength[month - 1]){
-// 	// 	return false;
-// 	// }
-// 	console.log("Good date");
-// 	return true;
-// }
-
-
 //main page controller
 rhit.MapPageController = class {
 
@@ -339,30 +296,30 @@ rhit.MapPageController = class {
 			const startDateSegs = startDate.split('/');
 			const endDate = $("#cityPlanEndDate").val();
 			const endDateSegs = endDate.split('/');
-			const cityInfo = {
-				'cityId': rhit.planAndRouteManager.addPlanCityId,
-				'cityName': rhit.planAndRouteManager.addPlanCityName,
-				'name': $('#cityPlanName').val(),
-				'budget': $('#cityPlanBudget').val(),
-				'description': $('#cityPlanDescription').val(),
-				'startDate': startDate == undefined ? undefined : startDateSegs[0] + '/' + startDateSegs[1],
-				'startYear': startDateSegs[2],
-				'endDate': endDate == undefined ? undefined : endDateSegs[0] + '/' + endDateSegs[1],
-				'endYear': endDateSegs[2]
-			}
-
-			//Year included in startDate
 			// const cityInfo = {
 			// 	'cityId': rhit.planAndRouteManager.addPlanCityId,
 			// 	'cityName': rhit.planAndRouteManager.addPlanCityName,
 			// 	'name': $('#cityPlanName').val(),
 			// 	'budget': $('#cityPlanBudget').val(),
 			// 	'description': $('#cityPlanDescription').val(),
-			// 	'startDate': startDate,
+			// 	'startDate': startDate == undefined ? undefined : startDateSegs[0] + '/' + startDateSegs[1],
 			// 	'startYear': startDateSegs[2],
 			// 	'endDate': endDate == undefined ? undefined : endDateSegs[0] + '/' + endDateSegs[1],
 			// 	'endYear': endDateSegs[2]
 			// }
+
+			//Year included in startDate
+			const cityInfo = {
+				'cityId': rhit.planAndRouteManager.addPlanCityId,
+				'cityName': rhit.planAndRouteManager.addPlanCityName,
+				'name': $('#cityPlanName').val(),
+				'budget': $('#cityPlanBudget').val(),
+				'description': $('#cityPlanDescription').val(),
+				'startDate': startDate,
+				'startYear': startDateSegs[2],
+				'endDate': endDate,
+				'endYear': endDateSegs[2]
+			}
 
 			let issues = rhit.validateData(cityInfo)
 			if (issues.length == 0) {
@@ -379,27 +336,27 @@ rhit.MapPageController = class {
 			const startDateSegs = startDate.split('/');
 			const endDate = $("#routeEndDate").val();
 			const endDateSegs = endDate.split('/');
-			const routeInfo = {
-				'name': $('#routeName').val(),
-				'startDate': $('#routeStartDate').val(),
-				'budget': $('#routeBudget').val(),
-				'description': $('#routeDescription').val(),
-				'startDate': startDate == undefined ? undefined : startDateSegs[0] + '/' + startDateSegs[1],
-				'startYear': startDateSegs[2],
-				'endDate': endDate == undefined ? undefined : endDateSegs[0] + '/' + endDateSegs[1],
-				'endYear': endDateSegs[2]
-			}
-			//Year included in start date
 			// const routeInfo = {
 			// 	'name': $('#routeName').val(),
 			// 	'startDate': $('#routeStartDate').val(),
 			// 	'budget': $('#routeBudget').val(),
 			// 	'description': $('#routeDescription').val(),
-			// 	'startDate': startDate,
+			// 	'startDate': startDate == undefined ? undefined : startDateSegs[0] + '/' + startDateSegs[1],
 			// 	'startYear': startDateSegs[2],
-			// 	'endDate': endDate,
+			// 	'endDate': endDate == undefined ? undefined : endDateSegs[0] + '/' + endDateSegs[1],
 			// 	'endYear': endDateSegs[2]
 			// }
+			//Year included in start date
+			const routeInfo = {
+				'name': $('#routeName').val(),
+				'startDate': $('#routeStartDate').val(),
+				'budget': $('#routeBudget').val(),
+				'description': $('#routeDescription').val(),
+				'startDate': startDate,
+				'startYear': startDateSegs[2],
+				'endDate': endDate,
+				'endYear': endDateSegs[2]
+			}
 			let issues = rhit.validateData(routeInfo)
 			if (issues.length == 0) {
 				rhit.planAndRouteManager.addRoute(routeInfo);
@@ -764,8 +721,16 @@ rhit.city = class {
 rhit.ListPageController = class {
 	constructor() {
 		let readyForDelete = 0;
+		const filterList = new Map([
+				["99", "allTripsButt"],
+				["100", "NYButt"],
+				["101", "MiamiButt"],
+				["102", "LAButt"]
+		]);
 
 		document.querySelector("#planDoneButt").addEventListener("click", (event) => {
+
+
 			// const name = document.querySelector("#name").value;    //use standin for Plan's name since its not editable as of now
 			const name = "placeHolderName";
 			const startDate = document.querySelector("#startDateInput").value;
@@ -774,55 +739,39 @@ rhit.ListPageController = class {
 			const description = document.querySelector("#descripInput").value;
 
 			const tripId = rhit.storage.getTripId();
-			// if (rhit.validateData(name, startDate, endDate, budget)) {
-			// 	rhit.planDetailsManager = new rhit.PlanDetailsManager(tripId);						
-			// 	rhit.planDetailsManager.edit(name, startDate, endDate, budget, description);
-			// }
 
 			rhit.clearErrMsgInModal('planDetails');
 			const startDateSegs = startDate.split('/');
 			const endDateSegs = endDate.split('/');
-			let startDateNew = undefined ? undefined : startDateSegs[0] + '/' + startDateSegs[1];
-			console.log("Start Date New:" + startDateNew);
+			// let startDateNew = undefined ? undefined : startDateSegs[0] + '/' + startDateSegs[1];
 			let startYear = startDateSegs[2];
-			let endDateNew = undefined ? undefined : endDateSegs[0] + '/' + endDateSegs[1];
+			// let endDateNew = undefined ? undefined : endDateSegs[0] + '/' + endDateSegs[1];
 			let endYear = endDateSegs[2];
 
-			// const tripInfo = {
-			// 	'name': "Placeholder",
-			// 	'startDate': $('#routeStartDate').val(),
-			// 	'budget': $('#budgetInput').val(),
-			// 	'description': $('#descripInput').val(),
-			// 	'startDate': startDate == undefined ? undefined : startDateSegs[0] + '/' + startDateSegs[1],
-			// 	'startYear': startDateSegs[2],
-			// 	'endDate': endDate == undefined ? undefined : endDateSegs[0] + '/' + endDateSegs[1],
-			// 	'endYear': endDateSegs[2]
-			// }
 			const tripInfo = {
 				'name': "Placeholder",
 				'startDate': $('#routeStartDate').val(),
 				'budget': $('#budgetInput').val(),
 				'description': $('#descripInput').val(),
-				'startDate': startDateNew,
+				'startDate': startDate,
 				'startYear': startYear,
-				'endDate': endDateNew,
+				'endDate': endDate,
 				'endYear': endYear
 			}
 
 			let issues = rhit.validateData(tripInfo)
 			if (issues.length == 0) {
-				console.log("modal should dissapear");
 				rhit.planDetailsManager = new rhit.PlanDetailsManager(tripId);						
 				rhit.planDetailsManager.edit(name, startDate, endDate, startYear, endYear, budget, description);
 				$('#planDetails').modal('hide');
 			} else {
-				console.log("modal has issues:" + issues.length);
 				rhit.showErrMsgInModal('planDetails', issues);
 			}
 		});
 
 		rhit.planAndRouteManager.beginListening(this.updateList.bind(this));
 
+		//Navbar Butts
 		document.querySelector("#myMapButt").addEventListener("click", (event) => {
 			window.location.href = "/map.html"
 		});
@@ -833,14 +782,25 @@ rhit.ListPageController = class {
 			rhit.fbAuthManager.signOut();
 		});
 		document.querySelector("#submitDeletePlan").addEventListener("click", (event) => {
-			console.log("Clicked submit deletion");
-			rhit.planAndRouteManager.delete();
-			this.updateList();
-		});	
+			const tripId = rhit.storage.getTripId();
+			console.log("Clicked submit deletion for: " + tripId);
+			rhit.planAndRouteManager.delete().then(() => {
+				this.updateList(99);
+			});
+		});
+		
+		//Dropdown Butts
+		for(const key of filterList.keys()){
+			console.log("Value of key: " + filterList.get(key));
+			document.querySelector("#" + filterList.get(key)).addEventListener("click", (event) => {
+				this.updateList(key);
+			});
+		}
 	}
 
 	//Update Viewer
-	updateList() {
+	updateList(code="99") {
+		console.log("updating list");
 		const newJan = htmlToElement('<div id="janList"></div');		//make number a var, corresponding to each of the 12 months
 		const newFeb = htmlToElement('<div id="febList"></div');
 		const newMar = htmlToElement('<div id="marList"></div');
@@ -853,80 +813,100 @@ rhit.ListPageController = class {
 		const newOct = htmlToElement('<div id="octList"></div');
 		const newNov = htmlToElement('<div id="novList"></div');
 		const newDec = htmlToElement('<div id="decList"></div');
+
+		document.querySelector(".jan").innerHTML = "";
+		document.querySelector(".feb").innerHTML = "";
+		document.querySelector(".mar").innerHTML = "";
+		document.querySelector(".apr").innerHTML = "";
+		document.querySelector(".jun").innerHTML = "";
+		document.querySelector(".jul").innerHTML = "";
+		document.querySelector(".aug").innerHTML = "";
+		document.querySelector(".sep").innerHTML = "";
+		document.querySelector(".oct").innerHTML = "";
+		document.querySelector(".nov").innerHTML = "";
+		document.querySelector(".dec").innerHTML = "";
+
 		for (let i = 0; i < rhit.planAndRouteManager.length; i++) {
 			
-			const trip = rhit.planAndRouteManager.getTripAtIndex(i); 		
+			const trip = rhit.planAndRouteManager.getTripAtIndex(i); 	
+			console.log("Trip:" + trip);
+			
 			let tripCityId = "";
 			if(trip.type == "Plan"){
 				tripCityId = trip.cityId;
 			} else {
 				tripCityId = trip.startCityId;
 			}
-			rhit.cityManager.getCity(tripCityId).then(cityData => {		//get city data, and then use img file path in that data to create a card
-				const newCard = this._createCard(trip, cityData);
 
-				newCard.onclick = (event) => {
-					rhit.storage.setTripId(trip.id);
-					this.updateModalDetails(trip);
-				};
-				newCard.firstElementChild.firstElementChild.onclick = (event) => {
-					$("#planDetails").modal('show');
-					console.log("Clicked on card with id: ", trip.id);
-				};
-				const startDate = trip.startDate;
-				const startParts = startDate.split('/');
-				const startMonth = parseInt(startParts[0], 10);
-				switch (startMonth) {
-					case 1:
-						newJan.appendChild(newCard);
-						document.querySelector(".jan").innerHTML = "January";
-						break;
-					case 2:
-						newFeb.appendChild(newCard);
-						document.querySelector(".feb").innerHTML = "February";
-						break;
-					case 3:
-						newMar.appendChild(newCard);
-						document.querySelector(".mar").innerHTML = "March";
-						break;
-					case 4:
-						newApr.appendChild(newCard);
-						document.querySelector(".apr").innerHTML = "April";
-						break;
-					case 5:
-						newMay.appendChild(newCard);
-						document.querySelector(".may").innerHTML = "May";
-						break;
-					case 6:
-						newJun.appendChild(newCard);
-						document.querySelector(".jun").innerHTML = "June";
-						break;
-					case 7:
-						newJul.appendChild(newCard);
-						document.querySelector(".jul").innerHTML = "July";
-						break;
-					case 8:
-						newAug.appendChild(newCard);
-						document.querySelector(".aug").innerHTML = "August";
-						break;
-					case 9:
-						newSep.appendChild(newCard);
-						document.querySelector(".sep").innerHTML = "September";
-						break;
-					case 10:
-						newOct.appendChild(newCard);
-						document.querySelector(".oct").innerHTML = "October";
-						break;
-					case 11:
-						newNov.appendChild(newCard);
-						document.querySelector(".nov").innerHTML = "November";
-						break;
-					case 12:
-						newDec.appendChild(newCard);
-						document.querySelector(".dec").innerHTML = "December";
-						break;
-				}
-			});
+			if(this.checkCityId(tripCityId, code)){
+
+				rhit.cityManager.getCity(tripCityId).then(cityData => {		//get city data, and then use img file path in that data to create a card
+					const newCard = this._createCard(trip, cityData);
+					newCard.onclick = (event) => {
+						rhit.storage.setTripId(trip.id);
+						this.updateModalDetails(trip);
+					};
+					newCard.firstElementChild.firstElementChild.onclick = (event) => {
+						$("#planDetails").modal('show');
+						console.log("Clicked on card with id: ", trip.id);
+					};
+					const startDate = trip.startDate;
+					const startParts = startDate.split('/');
+					const startMonth = parseInt(startParts[0], 10);
+					// const startDay = parseInt(startDate[1], 10);
+					// const startYear = parseInt(startDate[2], 10);
+					switch (startMonth) {
+						case 1:
+							newJan.appendChild(newCard);
+							document.querySelector(".jan").innerHTML = "January";
+							break;
+						case 2:
+							newFeb.appendChild(newCard);
+							document.querySelector(".feb").innerHTML = "February";
+							break;
+						case 3:
+							newMar.appendChild(newCard);
+							document.querySelector(".mar").innerHTML = "March";
+							break;
+						case 4:
+							newApr.appendChild(newCard);
+							document.querySelector(".apr").innerHTML = "April";
+							break;
+						case 5:
+							newMay.appendChild(newCard);
+							document.querySelector(".may").innerHTML = "May";
+							break;
+						case 6:
+							newJun.appendChild(newCard);
+							document.querySelector(".jun").innerHTML = "June";
+							break;
+						case 7:
+							newJul.appendChild(newCard);
+							document.querySelector(".jul").innerHTML = "July";
+							break;
+						case 8:
+							newAug.appendChild(newCard);
+							document.querySelector(".aug").innerHTML = "August";
+							break;
+						case 9:
+							newSep.appendChild(newCard);
+							document.querySelector(".sep").innerHTML = "September";
+							break;
+						case 10:
+							newOct.appendChild(newCard);
+							document.querySelector(".oct").innerHTML = "October";
+							break;
+						case 11:
+							newNov.appendChild(newCard);
+							document.querySelector(".nov").innerHTML = "November";
+							break;
+						case 12:
+							newDec.appendChild(newCard);
+							document.querySelector(".dec").innerHTML = "December";
+							break;
+					}
+				});
+			}
 		}
 
 		const oldJan = document.querySelector("#janList");
@@ -1003,6 +983,18 @@ rhit.ListPageController = class {
 		}
 	}
 
+	checkCityId(id, code){
+		if(code == 99){
+			console.log("true")
+			return true;
+		}
+		if(code == id){
+			return true;
+		}
+		console.log("false");
+		return false;
+	}
+
 	//Helper Functions
 	_createCard(trip, cityData) {
 		let cityName = "";
@@ -1040,11 +1032,6 @@ rhit.ListPageController = class {
 				<hr>
 			</div>
 		`)
-	}
-
-	_createDeleteButt(){
-		return htmlToElement(
-		)
 	}
 
 };
@@ -1154,23 +1141,23 @@ rhit.main = function () {
 	$(document).ready(() => {
 		$('[data-toggle="popover"]').popover();
 		$('#cityPlanStartDate').datepicker().on('show', () => {
-			$('.datepicker').css('transform', 'translateY(80px)');
+			// $('.datepicker').css('transform', 'translateY(80px)');
 		});
 		$('#cityPlanEndDate').datepicker().on('show', () => {
-			$('.datepicker').css('transform', 'translateY(80px)');
+			// $('.datepicker').css('transform', 'translateY(80px)');
 		});
 		$('#routeStartDate').datepicker().on('show', () => {
-			$('.datepicker').css('transform', 'translateY(80px)');
+			// $('.datepicker').css('transform', 'translateY(80px)');
 		});
 		$('#routeEndDate').datepicker().on('show', () => {
-			$('.datepicker').css('transform', 'translateY(80px)');
+			// $('.datepicker').css('transform', 'translateY(80px)');
 		});
 
 		$('#startDateInput').datepicker("setDate", $(this).attr("startDateInput")).on('show', () => {
-			$('.datepicker').css('transform', 'translateY(60px)');
+			// $('.datepicker').css('transform', 'translateY(200px)');
 		});
 		$('#endDateInput').datepicker("setDate", $(this).attr("endDateInput")).on('show', () => {
-			$('.datepicker').css('transform', 'translateY(40px)');
+			// $('.datepicker').css('transform', 'translateY(40px)');
 		});
 
 	})
