@@ -186,10 +186,16 @@ body {
     margin-top: 2%;
 }
 
-#cellPhoneDetectMsg {
+@media (min-width: 1400px){
+    #smallScreenMsg {
+        display: none;
+    }
+}
+#smallScreenMsg {
     margin-top: 10px;
     font-size: 15px;
     text-align: center;
+    transform: translateY(-1000);
 }
 
 @media (min-width: 700px) {
@@ -206,7 +212,7 @@ body {
 }
 
 @media (min-width: 600px) {
-    #cellPhoneDetectMsg {
+    #smallScreenMsg {
         display: none;
     }
 }
