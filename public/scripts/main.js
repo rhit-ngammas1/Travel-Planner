@@ -734,7 +734,6 @@ rhit.ListPageController = class {
 	constructor() {
 		let readyForDelete = 0;
 		const filterList = new Map([
-				["99", "allTripsButt"],
 				["100", "NYButt"],
 				["101", "MiamiButt"],
 				["102", "LAButt"],
@@ -828,7 +827,8 @@ rhit.ListPageController = class {
 	updateList(code="99") {
 		let noCitiesToShow = 1;
 
-		const newJan = htmlToElement('<div id="janList"></div');		//make number a var, corresponding to each of the 12 months
+		const newMess = htmlToElement('<div id="mess"></div');
+		const newJan = htmlToElement('<div id="janList"></div');		
 		const newFeb = htmlToElement('<div id="febList"></div');
 		const newMar = htmlToElement('<div id="marList"></div');
 		const newApr = htmlToElement('<div id="aprList"></div');
@@ -938,9 +938,13 @@ rhit.ListPageController = class {
 		}
 		if(noCitiesToShow){
 			console.log("No Cities");
-			const message = htmlToElement(`<h3>You have not created any routes or plans for this city :(</h3>`)
-			document.querySelector("#janList").parentElement.appendChild(message);
+			const message = htmlToElement(`<h3>You have not created any routes or plans for this city :(</h3>`);
+			newMess.appendChild(message);
 		}
+		const oldMess = document.querySelector("#mess");
+		oldMess.parentElement.appendChild(newMess);
+		oldMess.removeAttribute("id");
+		oldMess.hidden = true;
 
 		const oldJan = document.querySelector("#janList");
 		oldJan.removeAttribute("id");
