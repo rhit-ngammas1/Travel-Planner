@@ -876,6 +876,9 @@ rhit.ListPageController = class {
 					};
 					newCard.firstElementChild.firstElementChild.onclick = (event) => {
 						$("#planDetails").modal('show');
+						$('.modal').on('hidden.bs.modal', (event) => {
+							rhit.clearErrMsgInModal("planDetails");
+						})
 						console.log("Clicked on card with id: ", trip.id);
 					};
 					const startDate = trip.startDate;
