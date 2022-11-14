@@ -747,7 +747,10 @@ rhit.ListPageController = class {
 				["109", "PhillyButt"],
 				["110", "PhoenixButt"],
 				["111", "LVButt"],
-				["112", "SLCButt"]
+				["112", "SLCButt"],
+				["113", "DallasButt"],
+				["114", "AtlantaButt"],
+				["115", "DenverButt"]
 		]);
 
 		document.querySelector("#planDoneButt").addEventListener("click", (event) => {

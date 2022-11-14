@@ -34,7 +34,7 @@ body {
 #newYorkPin {
     position: relative;
     left: 89%;
-    bottom: 45%;
+    bottom: 41%;
 } 
 
 #miamiPin {
@@ -46,66 +46,84 @@ body {
 #laPin {
     position: relative;
     left: 7%;
-    bottom: 35%;
+    bottom: 34%;
 }
 
 #chicagoPin{
     position: relative;
-    left: 63%;
-    bottom: 50%;
+    left: 65%;
+    bottom: 46%;
 }
 
 #houstonPin{
     position: relative;
     left: 50%;
-    bottom: 25%;
+    bottom: 24%;
 }
 
 #seattlePin{
     position: relative;
     left: 8%;
-    bottom: 73%;
+    bottom: 70%;
 }
 
 #bostonPin{
     position: relative;
-    left: 92%;
-    bottom: 65%;
+    left: 93%;
+    bottom: 60%;
 }
 
 #dcPin {
     position: relative;
-    left: 82%;
-    bottom: 58%;
+    left: 84%;
+    bottom: 53%;
 }
 
 #sfPin{
     position: relative;
-    left: 3%;
-    bottom: 65%;
+    left: 4%;
+    bottom: 57%;
 }
 
 #phillyPin{
     position: relative;
-    left: 88%;
-    bottom: 69%;
+    left: 87%;
+    bottom: 62%;
 }
 
 #phoenixPin{
     position: relative;
-    left: 20%;
-    bottom: 55%;
+    left: 18%;
+    bottom: 48%;
 }
 
 #lasVegasPin{
     position: relative;
     left: 14.5%;
-    bottom: 62%;
+    bottom: 57%;
 }
 
 #saltLakeCityPin{
     position: relative;
     left:22%;
+    bottom: 69%;
+}
+
+#dallasPin{
+    position: relative;
+    left: 48%;
+    bottom: 52%;
+}
+
+#atlantaPin{
+    position: relative;
+    left: 73%;
+    bottom: 58%;
+}
+
+#denverPin{
+    position: relative;
+    left: 34%;
     bottom: 75%;
 }
 
