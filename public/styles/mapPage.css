@@ -64,7 +64,7 @@ body {
 #seattlePin{
     position: relative;
     left: 8%;
-    bottom: 70%;
+    bottom: 68%;
 }
 
 #bostonPin{
@@ -126,6 +126,7 @@ body {
     left: 34%;
     bottom: 75%;
 }
+
 
 #mapContainer {
     width: 80vw;
