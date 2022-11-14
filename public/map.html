@@ -47,23 +47,23 @@
           </button>
         </div>
         <div class="modal-body">
-          <div class="city-detail-carousel">
-            <div id="cityDetailCarouselControls" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner">
 
-              </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
-                data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
-                data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-              </button>
+          <div id="cityDetailCarouselControls" class="city-detail-carousel carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+
             </div>
+            <a class="carousel-control-prev" role="button" data-slide="prev"
+              onclick="$('#cityDetailCarousel').carousel('prev')">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" type="button" data-slide="next"
+              onclick="$('#cityDetailCarousel').carousel('next')">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
           </div>
+
 
           <div class="city-detail-intro">
 
@@ -196,59 +196,62 @@
         <br>
         <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="phoenix pin" id="phoenixPin" data-pin-city-id="110"
           data-pin-city-name="Phoenix" data-toggle="popover" title="Phoenix">
-          <br>
-          <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="las vegas pin" id="lasVegasPin" data-pin-city-id="111"
-            data-pin-city-name="Las Vegas" data-toggle="popover" title="Las Vegas">
-            <br>
-        <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="salt lake city pin" id="saltLakeCityPin" data-pin-city-id="112"
-          data-pin-city-name="Salt Lake City" data-toggle="popover" title="Salt Lake City">
-          <br>
+        <br>
+        <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="las vegas pin" id="lasVegasPin" data-pin-city-id="111"
+          data-pin-city-name="Las Vegas" data-toggle="popover" title="Las Vegas">
+        <br>
+        <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="salt lake city pin" id="saltLakeCityPin"
+          data-pin-city-id="112" data-pin-city-name="Salt Lake City" data-toggle="popover" title="Salt Lake City">
+        <br>
         <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="dalls pin" id="dallasPin" data-pin-city-id="113"
           data-pin-city-name="Dallas" data-toggle="popover" title="Dallas">
-          <br>
-            <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="atlanta pin" id="atlantaPin" data-pin-city-id="114"
-              data-pin-city-name="Atlanta" data-toggle="popover" title="Atlanta">
-              <br>      
-            <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="denver pin" id="denverPin" data-pin-city-id="115"
-                data-pin-city-name="Denver" data-toggle="popover" title="Denver">   
+        <br>
+        <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="atlanta pin" id="atlantaPin" data-pin-city-id="114"
+          data-pin-city-name="Atlanta" data-toggle="popover" title="Atlanta">
+        <br>
+        <img src="imgs/blackpin_9_14.jpg" class="pinpoint" alt="denver pin" id="denverPin" data-pin-city-id="115"
+          data-pin-city-name="Denver" data-toggle="popover" title="Denver">
       </div>
 
       <div id="btnWrapper" class="col-2 no-gutters">
-        <div class="row"><button id="toggleRouteDisplay" class="btn btn-secondary map-page-func-btn">Toggle Route Display</button></div>
-        <div class="row"><button id="closeAllPopover" class="btn btn-secondary map-page-func-btn">Close All Popovers</button></div>
-        <button id="clrRouteSelBtn" class="btn btn-secondary map-page-func-btn" style="display: none">Clear Start Point Selection</button>
+        <div class="row"><button id="toggleRouteDisplay" class="btn btn-secondary map-page-func-btn">Toggle Route
+            Display</button></div>
+        <div class="row"><button id="closeAllPopover" class="btn btn-secondary map-page-func-btn">Close All
+            Popovers</button></div>
+        <button id="clrRouteSelBtn" class="btn btn-secondary map-page-func-btn" style="display: none">Clear Start Point
+          Selection</button>
       </div>
 
     </div>
     <div class="row">
       <div id="routeSelMsg"></div>
       <div id="cellPhoneDetectMsg">If you are on your mobile phone, please rotate your screen for best experience.
+      </div>
     </div>
-  </div>
 
 
 
 
 
-  <script src="scripts/jquery.min.js"></script>
-  <script src="https://unpkg.com/@popperjs/core@2"></script>
-  <script src="scripts/bootstrap.min.js"></script>
-  <!-- <script src="scripts/popper.js"></script> -->
+    <script src="scripts/jquery.min.js"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="scripts/bootstrap.min.js"></script>
+    <!-- <script src="scripts/popper.js"></script> -->
 
-  <!-- <script src="scripts/bootstrap-material-design.js"></script> -->
-  <!-- <script>$("body").bootstrapMaterialDesign();</script> -->
-  <script src="/__/firebase/7.18.0/firebase-app.js"></script>
-  <script src="/__/firebase/7.18.0/firebase-analytics.js"></script>
-  <script src="/__/firebase/7.18.0/firebase-auth.js"></script>
-  <script src="/__/firebase/7.18.0/firebase-firestore.js"></script>
-  <script src="/__/firebase/init.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-  <script src="scripts/main.js"></script>
-  <script src="scripts/bootstrap-popover-x.js"></script>
-  <script src="scripts/leader-line.min.js"></script>
+    <!-- <script src="scripts/bootstrap-material-design.js"></script> -->
+    <!-- <script>$("body").bootstrapMaterialDesign();</script> -->
+    <script src="/__/firebase/7.18.0/firebase-app.js"></script>
+    <script src="/__/firebase/7.18.0/firebase-analytics.js"></script>
+    <script src="/__/firebase/7.18.0/firebase-auth.js"></script>
+    <script src="/__/firebase/7.18.0/firebase-firestore.js"></script>
+    <script src="/__/firebase/init.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="scripts/main.js"></script>
+    <script src="scripts/bootstrap-popover-x.js"></script>
+    <script src="scripts/leader-line.min.js"></script>
 
 
 </body>
